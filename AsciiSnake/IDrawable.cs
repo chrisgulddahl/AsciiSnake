@@ -1,6 +1,4 @@
-﻿
-
-namespace dk.ChrisGulddahl.AsciiSnake
+﻿namespace dk.ChrisGulddahl.AsciiSnake
 {
 	/**
 	 * Models objects that are drawable in the game. E.g. snake, border, apples.

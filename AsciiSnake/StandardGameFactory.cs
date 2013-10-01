@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
@@ -9,7 +6,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	{
 		public IGame CreateGame()
 		{
-			return new Game(new StandardGameFactory());
+			return new Game(this);
 		}
 
 		public IConsoleWrapper CreateConsole()

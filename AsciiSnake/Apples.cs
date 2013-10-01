@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Drawing;
 
@@ -99,7 +98,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			return _apples.ContainsKey(position);
 		}
 
-		public void EatAppleAt(Point position)
+		public void RemoveAppleAt(Point position)
 		{
 			_apples.Remove(position);
 			_newlyRemovedApples.Add(position);

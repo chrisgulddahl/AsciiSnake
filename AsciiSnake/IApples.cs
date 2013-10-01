@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System.Drawing;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
@@ -30,6 +26,9 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		 */
 		bool HasAppleAt(Point position);
 
-		void EatAppleAt(Point position);
+		/**
+		 * Remove apple at position
+		 */
+		void RemoveAppleAt(Point position);
 	}
 }
