@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
@@ -13,6 +14,8 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		ConsoleColor BackgroundColor { get; set; }
 
 		ConsoleColor ForegroundColor { get; set; }
+
+		Encoding OutputEncoding { get; set; }
 
 		string Title { get; set; }
 

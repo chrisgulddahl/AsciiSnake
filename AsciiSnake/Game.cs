@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 namespace dk.ChrisGulddahl.AsciiSnake
@@ -24,11 +26,12 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private ISoundManager _soundManager;
 		private IDrawable _drawables;
 		private bool _quit;
+		private int _tickTime = 80; //ms
 
 		public Game(IGameFactory factory)
 		{
 			_factory = factory;
-			Reset();
+			Reset(false);
 		}
 
 		public int Tick { get; private set; }
@@ -43,14 +46,16 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			get { return _console; }
 		}
 
-		private void Reset()
+		private void Reset(bool setMuted)
 		{
 			_console = _factory.CreateConsole();
 			_border = _factory.CreateBorder(this);
 			_snake = _factory.CreateSnake(Console);
 			_apples = _factory.CreateApples(_snake);
 			_soundManager = _factory.CreateSoundManager();
+			_soundManager.Muted = setMuted;
 			_drawables = new CompositeDrawable(new List<IDrawable> { _border, _apples, _snake });
+			Console.OutputEncoding = Encoding.ASCII;
 			Console.CursorVisible = false;
 			Console.BackgroundColor = ConsoleColor.White;
 			Console.ForegroundColor = Config.DefaultConsoleForeground;
@@ -75,6 +80,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			// Main game loop
 			while (!_quit)
 			{
+				var start = DateTime.Now.Ticks;
 				HandleKeyPress();
 				_snake.Move();
 				HandleSnakeEatingApple();
@@ -85,7 +91,8 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				_apples.RemoveOldApplesAndAddNewIfNeeded(Tick);
 				_drawables.Redraw();
 				Tick++;
-				Thread.Sleep(120);
+				int elapsedTimeMs = (int)(DateTime.Now.Ticks - start)/10000;
+				Thread.Sleep((_tickTime - elapsedTimeMs));
 			}
 
 			// If snake crash caused breaking main loop
@@ -98,7 +105,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				if (Console.ReadKey(true).KeyChar == 'q')
 					return;
 				
-				Reset();
+				Reset(_soundManager.Muted);
 				Start();
 			}
 		}
@@ -143,7 +150,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 					"Final score: " + Score,
 					"Press Q to quit. Press any other key to restart"
 				};
-			int messageBoxWidth = lines.Aggregate<string, int>(0, (maxLength, line) => (line.Length > maxLength ? line.Length : maxLength));
+			int messageBoxWidth = lines.Aggregate<string, int>(0, (maxLength, line) => (Math.Max(line.Length, maxLength)));
 			int messageBoxHeight = lines.Count;
 			int messageBoxLeft = (Console.WindowWidth - messageBoxWidth) / 2;
 			int messageBoxTop = (Console.WindowHeight - messageBoxHeight) / 2;

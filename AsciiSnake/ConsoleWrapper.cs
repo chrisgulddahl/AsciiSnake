@@ -22,6 +22,12 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			get { return _windowWidth; }
 		}
 
+		public System.Text.Encoding OutputEncoding
+		{
+			get { return Console.OutputEncoding; }
+			set { Console.OutputEncoding = value; }
+		}
+
 		public void SetCursorPosition(int left, int top)
 		{
 			Console.SetCursorPosition(left, top);
