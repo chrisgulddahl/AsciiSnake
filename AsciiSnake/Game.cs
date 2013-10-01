@@ -26,12 +26,13 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private ISoundManager _soundManager;
 		private IDrawable _drawables;
 		private bool _quit;
-		private int _tickTime = 80; //ms
+		private int _tickTime;
 
-		public Game(IGameFactory factory)
+		public Game(IGameFactory factory, int tickTime)
 		{
 			_factory = factory;
 			Reset(false);
+			_tickTime = tickTime;
 		}
 
 		public int Tick { get; private set; }
@@ -92,7 +93,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				_drawables.Redraw();
 				Tick++;
 				int elapsedTimeMs = (int)(DateTime.Now.Ticks - start)/10000;
-				Thread.Sleep((_tickTime - elapsedTimeMs));
+				Thread.Sleep((_tickTime - elapsedTimeMs >= 0 ? _tickTime - elapsedTimeMs : 0));
 			}
 
 			// If snake crash caused breaking main loop

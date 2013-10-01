@@ -6,7 +6,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	{
 		public IGame CreateGame()
 		{
-			return new Game(this);
+			return new Game(this, Config.DefaultTickTime);
 		}
 
 		public IConsoleWrapper CreateConsole()

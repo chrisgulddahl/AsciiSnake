@@ -10,9 +10,9 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public const char BorderRightChar = '|';
 		public const char BorderBottomChar = '-';
 		public const char BorderLeftChar = '|';
-		public static char SnakeHeadDrawingChar = 'O';
-		public static char SnakeBodyDrawingChar = 'o';
-		public static char AppleDrawingChar = '@';
-
+		public const char SnakeHeadDrawingChar = 'O';
+		public const char SnakeBodyDrawingChar = 'o';
+		public const char AppleDrawingChar = '@';
+		public const int DefaultTickTime = 80;
 	}
 }
