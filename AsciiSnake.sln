@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsciiSnake", "AsciiSnake\AsciiSnake.csproj", "{160E7693-7D77-4758-8D50-8FFCE9FEC5CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsciiSnake.Tests.Unit", "AsciiSnake.Tests.Unit\AsciiSnake.Tests.Unit.csproj", "{31EEA6AF-327E-4E5B-ACF1-1C6CF6C7D6BC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{160E7693-7D77-4758-8D50-8FFCE9FEC5CF} = {160E7693-7D77-4758-8D50-8FFCE9FEC5CF}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +18,10 @@ Global
 		{160E7693-7D77-4758-8D50-8FFCE9FEC5CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{160E7693-7D77-4758-8D50-8FFCE9FEC5CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{160E7693-7D77-4758-8D50-8FFCE9FEC5CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31EEA6AF-327E-4E5B-ACF1-1C6CF6C7D6BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31EEA6AF-327E-4E5B-ACF1-1C6CF6C7D6BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31EEA6AF-327E-4E5B-ACF1-1C6CF6C7D6BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31EEA6AF-327E-4E5B-ACF1-1C6CF6C7D6BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

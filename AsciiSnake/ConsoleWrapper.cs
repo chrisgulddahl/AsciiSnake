@@ -2,7 +2,7 @@
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	class ConsoleWrapper : IConsoleWrapper
+	public class ConsoleWrapper : IConsoleWrapper
 	{
 		private int _windowHeight;
 		private int _windowWidth;

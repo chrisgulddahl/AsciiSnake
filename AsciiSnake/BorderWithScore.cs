@@ -6,11 +6,11 @@
 		private IGame _game;
 		private int _score;
 
-		public BorderWithScore(IBorder border, IGame game)
+		public BorderWithScore(IBorder border, IGame game, IConsoleWrapper console)
 		{
 			_border = border;
 			_game = game;
-			Console = _border.Console;
+			Console = console;
 			_score = 0;
 		}
 
@@ -36,13 +36,14 @@
 
 		public void Redraw()
 		{
-			_border.Redraw();
+			//_border.Redraw();
 			DrawScore();
 		}
 
 		public bool NeedsRedraw()
 		{
-			return _border.NeedsRedraw() || _game.Score != _score;
+			//return _border.NeedsRedraw() || _game.Score != _score;
+			return false;
 		}
 	}
 }

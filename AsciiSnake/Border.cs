@@ -2,72 +2,49 @@
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	class Border : IBorder
+	public class Border : IBorder
 	{
 		private int _consoleHeightAtLastDraw = 0;
 		private int _consoleWidthAtLastDraw = 0;
-		private readonly char _borderTop, _borderRight, _borderBottom, _borderLeft;
 
-		public Border(IConsoleWrapper console, char borderTop, char borderRight, char borderBottom, char borderLeft)
+		public Border(IConsoleWrapper console, IDiffFlushableCanvas canvas, IConfig config)
 		{
 			Console = console;
-			_borderTop = borderTop;
-			_borderRight = borderRight;
-			_borderBottom = borderBottom;
-			_borderLeft = borderLeft;
+			Config = config;
+			Canvas = canvas;
 		}
 
-		public Border(IConsoleWrapper console, char borderTopAndBottom, char borderLeftAndRight)
-			: this(console, borderTopAndBottom, borderLeftAndRight, borderTopAndBottom, borderLeftAndRight) { }
+		private IConsoleWrapper Console { get; set; }
 
-		public IConsoleWrapper Console { get; private set;  }
+		private IDiffFlushableCanvas Canvas { get; set; }
+
+		private IConfig Config { get; set; }
 
 		public void Draw()
 		{
 			_consoleHeightAtLastDraw = Console.WindowHeight;
 			_consoleWidthAtLastDraw = Console.WindowWidth;
 
-			DrawWithChars(_borderTop, _borderRight, _borderBottom, _borderLeft);
-		}
-
-		private void Undraw()
-		{
-			DrawWithChars(Config.NullChar, Config.NullChar, Config.NullChar, Config.NullChar);
-		}
-
-		public void Redraw()
-		{
-			if (NeedsRedraw())
-			{
-				Undraw();
-				Draw();
-			}
-		}
-
-		public bool NeedsRedraw()
-		{
-			return Console.WindowHeight != _consoleHeightAtLastDraw || Console.WindowWidth != _consoleWidthAtLastDraw;
+			DrawWithChars(Config.BorderTopChar, Config.BorderRightChar, Config.BorderBottomChar, Config.BorderLeftChar);
 		}
 
 		public bool ContainsPosition(Point position)
 		{
 			return position.X <= 0 || position.X >= _consoleWidthAtLastDraw - 1
-			       || position.Y <= 0 || position.Y >= _consoleHeightAtLastDraw - 2;
+				   || position.Y <= 0 || position.Y >= _consoleHeightAtLastDraw - 2;
 		}
 
 		private void DrawWithChars(char topChar, char rightChar, char bottomChar, char leftChar)
 		{
-			Console.SetCursorPosition(0, 0);
-			Console.Write(new string(topChar, _consoleWidthAtLastDraw));
-			Console.SetCursorPosition(0, _consoleHeightAtLastDraw - 2);
-			Console.Write(new string(bottomChar, _consoleWidthAtLastDraw));
-
+			for (int col = 0; col < _consoleWidthAtLastDraw - 2; col++)
+			{
+				Canvas.DrawChar(new Point(col, 0), topChar);
+				Canvas.DrawChar(new Point(col, _consoleHeightAtLastDraw - 2), bottomChar);
+			}
 			for (int row = 1; row < _consoleHeightAtLastDraw - 2; row++)
 			{
-				Console.SetCursorPosition(0, row);
-				Console.Write(leftChar);
-				Console.SetCursorPosition(_consoleWidthAtLastDraw - 1, row);
-				Console.Write(rightChar);
+				Canvas.DrawChar(new Point(0, row), leftChar);
+				Canvas.DrawChar(new Point(_consoleWidthAtLastDraw - 1, row), rightChar);
 			}
 		}
 	}

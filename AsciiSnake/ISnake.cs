@@ -1,9 +1,12 @@
 ﻿using System.Drawing;
+using System.Net;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	interface ISnake : IDrawable
+	public interface ISnake : IDrawable
 	{
+		bool Crashed { get; set; }
+
 		/**
 		 * Property used for setting the direction of the snake to North, East, South, West or None.
 		 */

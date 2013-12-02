@@ -7,35 +7,27 @@ using System.Threading;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	public enum Direction
-	{
-		North,
-		East,
-		South,
-		West,
-		None
-	}
-
 	class Game : IGame
 	{
-		private IGameFactory _factory;
+		private readonly IGameFactory _factory;
 		private IConsoleWrapper _console;
 		private IBorder _border;
 		private ISnake _snake;
 		private IApples _apples;
 		private ISoundManager _soundManager;
 		private IDrawable _drawables;
+		private IConfig _config;
 		private bool _quit;
-		private int _tickTime;
 
-		public Game(IGameFactory factory, int tickTime)
+		public Game(IGameFactory factory)
 		{
 			_factory = factory;
 			Reset(false);
-			_tickTime = tickTime;
 		}
 
 		public int Tick { get; private set; }
+
+		private IDiffFlushableCanvas Canvas { get; set; }
 
 		public int Score 
 		{
@@ -49,7 +41,9 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		private void Reset(bool setMuted)
 		{
-			_console = _factory.CreateConsole();
+			_config = _factory.Config;
+			_console = _factory.Console;
+			Canvas = _factory.DiffFlushableCanvas;
 			_border = _factory.CreateBorder(this);
 			_snake = _factory.CreateSnake(Console);
 			_apples = _factory.CreateApples(_snake);
@@ -58,8 +52,8 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			_drawables = new CompositeDrawable(new List<IDrawable> { _border, _apples, _snake });
 			Console.OutputEncoding = Encoding.ASCII;
 			Console.CursorVisible = false;
-			Console.BackgroundColor = ConsoleColor.White;
-			Console.ForegroundColor = Config.DefaultConsoleForeground;
+			Console.BackgroundColor = _config.ConsoleBackground;
+			Console.ForegroundColor = _config.ConsoleForeground;
 			Console.Title = "ASCII Snake by chrisgulddahl.dk";
 			Console.Clear();
 			Tick = 0;
@@ -70,12 +64,13 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		{
 			// Draw game for the first time
 			_drawables.Draw();
+			Canvas.WriteCurrentToConsole();
 			// Wait for player to press a key
 			while (!Console.KeyAvailable)
 			{
 				Thread.Sleep(10);
 				Console.RefreshWindowDimensions();
-				_drawables.Redraw();
+
 			}
 
 			// Main game loop
@@ -90,10 +85,11 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				if (_snake.CrashedWithSelf())
 					break;
 				_apples.RemoveOldApplesAndAddNewIfNeeded(Tick);
-				_drawables.Redraw();
+				_drawables.Draw();
+				Canvas.FlushChangesToConsole();
 				Tick++;
 				int elapsedTimeMs = (int)(DateTime.Now.Ticks - start)/10000;
-				Thread.Sleep((_tickTime - elapsedTimeMs >= 0 ? _tickTime - elapsedTimeMs : 0));
+				Thread.Sleep((_config.TickTime - elapsedTimeMs >= 0 ? _config.TickTime - elapsedTimeMs : 0));
 			}
 
 			// If snake crash caused breaking main loop

@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{160E7693-7D77-4758-8D50-8FFCE9FEC5CF}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{31EEA6AF-327E-4E5B-ACF1-1C6CF6C7D6BC}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>dk.ChrisGulddahl.AsciiSnake</RootNamespace>
-    <AssemblyName>AsciiSnake</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <RootNamespace>AsciiSnake.Tests.Unit</RootNamespace>
+    <AssemblyName>AsciiSnake.Tests.Unit</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -33,6 +30,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AsciiSnake">
+      <HintPath>..\AsciiSnake\bin\Debug\AsciiSnake.exe</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>C:\Program Files (x86)\JetBrains\ReSharper\v7.1\Bin\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\AsciiSnake.UnitTests\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -43,40 +49,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Apples.cs" />
-    <Compile Include="Border.cs" />
-    <Compile Include="BorderWithScore.cs" />
-    <Compile Include="Canvas.cs" />
-    <Compile Include="CanvasChar.cs" />
-    <Compile Include="CompositeDrawable.cs" />
-    <Compile Include="DefaultConfig.cs" />
-    <Compile Include="ConsoleWrapper.cs" />
-    <Compile Include="DiffFlushableCanvas.cs" />
-    <Compile Include="Direction.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="IApples.cs" />
-    <Compile Include="IBorder.cs" />
-    <Compile Include="ICanvas.cs" />
-    <Compile Include="ICanvasChar.cs" />
-    <Compile Include="IConfig.cs" />
-    <Compile Include="IDiffFlushableCanvas.cs" />
-    <Compile Include="IDrawable.cs" />
-    <Compile Include="IGame.cs" />
-    <Compile Include="IGameFactory.cs" />
-    <Compile Include="IConsoleWrapper.cs" />
-    <Compile Include="INewAppleLocationStrategy.cs" />
-    <Compile Include="ISnake.cs" />
-    <Compile Include="ISoundManager.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="ApplesTest.cs" />
+    <Compile Include="CanvasTest.cs" />
+    <Compile Include="DiffFlushableCanvasTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RandomNewAppleLocationStrategy.cs" />
-    <Compile Include="Snake.cs" />
-    <Compile Include="SoundManager.cs" />
-    <Compile Include="DefaultGameFactory.cs" />
-    <Compile Include="TitledBorder.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <Compile Include="SnakeTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

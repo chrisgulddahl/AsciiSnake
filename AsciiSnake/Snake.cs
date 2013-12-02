@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Net;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	class Snake : ISnake
+	public class Snake : ISnake
 	{
 		private Direction _direction;
 		private LinkedList<Point> _positions = new LinkedList<Point>();
-		private List<Point> _newlyChangedPositions = new List<Point>();
-		private List<Point> _newlyRemovedPositions = new List<Point>();
-		private char _snakeBodyDrawingChar;
-		private char _snakeHeadDrawingChar;
 		private bool _hasGrown = false;
-		private ConsoleColor _snakeColor;
 
-		public Snake(IConsoleWrapper console, int startX, int startY, char snakeHeadDrawingChar, char snakeBodyDrawingChar, ConsoleColor snakeColor)
+		public Snake(IDiffFlushableCanvas canvas, IConfig config, int startX, int startY)
 		{
-			Console = console;
+			Canvas = canvas;
+			Config = config;
 			Direction = Direction.None;
+			Crashed = false;
 			_positions.AddLast(new Point(startX, startY));
-			_snakeBodyDrawingChar = snakeBodyDrawingChar;
-			_snakeHeadDrawingChar = snakeHeadDrawingChar;
-			_snakeColor = snakeColor;
 		}
 
-		public IConsoleWrapper Console { get; private set; }
+		private IDiffFlushableCanvas Canvas { get; set; }
+
+		private IConfig Config { get; set; }
+
+		public bool Crashed { get; set; }
 
 		public Direction Direction
 		{
@@ -33,26 +32,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			set
 			{
 				if (!OppositeDirections(_direction, value))
+				{
 					_direction = value;
+				}
 			}
 		}
 
 		public int Length
 		{
 			get { return _positions.Count; }
-		}
-
-		private bool OppositeDirections(Direction dir1, Direction dir2)
-		{
-			if (dir1 == Direction.North)
-				return dir2 == Direction.South;
-			else if (dir1 == Direction.South)
-				return dir2 == Direction.North;
-			else if (dir1 == Direction.East)
-				return dir2 == Direction.West;
-			else if (dir1 == Direction.West)
-				return dir2 == Direction.East;
-			return false;
 		}
 
 		public Point Head
@@ -62,32 +50,22 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		public void Draw()
 		{
-			DrawSnakeWithChar(_snakeHeadDrawingChar, _snakeBodyDrawingChar);
-			_newlyChangedPositions.Clear();
-		}
-
-		public void Redraw()
-		{
-			if (!NeedsRedraw()) 
+			if (!NeedsRedraw())
 				return;
-
-			Console.ForegroundColor = _snakeColor;
-			// Erase removed elements
-			foreach(var position in _newlyRemovedPositions)
-				DrawSnakePoint(position, Config.NullChar);
-
-			// Update changed elements
-			foreach (var position in _newlyChangedPositions)
-				DrawSnakePoint(position, (position == Head ? _snakeHeadDrawingChar : _snakeBodyDrawingChar));
-
-			Console.ForegroundColor = Config.DefaultConsoleForeground;
-			_newlyRemovedPositions.Clear();
-			_newlyChangedPositions.Clear();
+			var snakeColor = Config.SnakeColor;
+			var snakeBodyChar = Config.SnakeBodyDrawingChar;
+			Canvas.DrawChar(Head, Config.SnakeHeadDrawingChar, snakeColor);
+			var elem = _positions.First.Next;
+			while (elem != null)
+			{
+				Canvas.DrawChar(elem.Value, snakeBodyChar, snakeColor);
+				elem = elem.Next;
+			}
 		}
 
 		public bool NeedsRedraw()
 		{
-			return _newlyChangedPositions.Count > 0 || _newlyRemovedPositions.Count > 0;
+			return true;
 		}
 
 		public void Move()
@@ -98,7 +76,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			Point oldHead = Head;
 			if (!_hasGrown)
 			{
-				_newlyRemovedPositions.Add(_positions.Last.Value);
 				_positions.RemoveLast();
 			}
 			switch (Direction)
@@ -112,9 +89,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				case Direction.East: _positions.AddFirst(new Point(oldHead.X + 1, oldHead.Y));
 					break;
 			}
-			_newlyChangedPositions.Add(Head);
-			if (ContainsPosition(oldHead))
-				_newlyChangedPositions.Add(oldHead);
 			_hasGrown = false;
 		}
 
@@ -139,25 +113,17 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			return _positions.Contains(position);
 		}
 
-		private void DrawSnakeWithChar(char snakeHeadChar, char snakeBodyChar)
+		private bool OppositeDirections(Direction dir1, Direction dir2)
 		{
-			Console.ForegroundColor = _snakeColor;
-			Console.SetCursorPosition(_positions.First.Value.X, _positions.First.Value.Y);
-			Console.Write(snakeHeadChar);
-			var elem = _positions.First.Next;
-			while (elem != null)
-			{
-				Console.SetCursorPosition(elem.Value.X, elem.Value.Y);
-				Console.Write(snakeBodyChar);
-				elem = elem.Next;
-			}
-			Console.ForegroundColor = Config.DefaultConsoleForeground;
-		}
-
-		private void DrawSnakePoint(Point position, char snakeChar)
-		{
-			Console.SetCursorPosition(position.X, position.Y);
-			Console.Write(snakeChar);
+			if (dir1 == Direction.North)
+				return dir2 == Direction.South;
+			else if (dir1 == Direction.South)
+				return dir2 == Direction.North;
+			else if (dir1 == Direction.East)
+				return dir2 == Direction.West;
+			else if (dir1 == Direction.West)
+				return dir2 == Direction.East;
+			return false;
 		}
 	}
 }

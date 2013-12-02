@@ -3,7 +3,7 @@ using System.Text;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	interface IConsoleWrapper
+	public interface IConsoleWrapper
 	{
 		int WindowHeight { get; }
 

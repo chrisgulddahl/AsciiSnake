@@ -3,33 +3,19 @@ using System.Linq;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	class CompositeDrawable : IDrawable
+	public class CompositeDrawable : IDrawable
 	{
-		private List<IDrawable> _drawables;
-
-		public CompositeDrawable(List<IDrawable> drawables)
+		public CompositeDrawable(IList<IDrawable> drawables)
 		{
-			_drawables = drawables;
-			Console = (_drawables.First() != null ? _drawables.First().Console : null);
+			Drawables = drawables;
 		}
 
-		public IConsoleWrapper Console { get; private set; }
+		public IList<IDrawable> Drawables { get; private set; }
 
 		public void Draw()
 		{
-			foreach(var drawable in _drawables)
+			foreach (var drawable in Drawables)
 				drawable.Draw();
-		}
-
-		public void Redraw()
-		{
-			foreach (var drawable in _drawables)
-				drawable.Redraw();
-		}
-
-		public bool NeedsRedraw()
-		{
-			return _drawables.Aggregate<IDrawable, bool>(false, (needsRedraw, drawable) => needsRedraw || drawable.NeedsRedraw());
 		}
 	}
 }

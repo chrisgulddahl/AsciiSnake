@@ -10,7 +10,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	{
 		private static void Main(string[] args)
 		{
-			IGameFactory gameFactory = new StandardGameFactory();
+			IGameFactory gameFactory = new DefaultGameFactory();
 			var game = gameFactory.CreateGame();
 			game.Start();
 		}

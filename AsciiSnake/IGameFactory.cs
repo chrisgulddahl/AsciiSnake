@@ -2,9 +2,13 @@
 {
 	interface IGameFactory
 	{
-		IGame CreateGame();
+		IConfig Config { get; }
 
-		IConsoleWrapper CreateConsole();
+		IConsoleWrapper Console { get; }
+
+		IDiffFlushableCanvas DiffFlushableCanvas { get; }
+
+		IGame CreateGame();
 
 		IBorder CreateBorder(IGame game);
 

@@ -2,17 +2,9 @@
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	interface IApples : IDrawable
+	public interface IApples : IDrawable
 	{
-		/**
-		* Amount of time an apple is displayed for expressed in game ticks
-		*/
-		int AppleLifetime { get; set; }
-
-		/**
-		 * Minimum number of apples at all times
-		 */
-		int MinApples { get; set; }
+		INewAppleLocationStrategy NewAppleLocationStrategy { get; set; }
 
 		/**
 		 * Remove apples that are too old and

@@ -1,23 +1,29 @@
-﻿namespace dk.ChrisGulddahl.AsciiSnake
+﻿using System.Drawing;
+
+namespace dk.ChrisGulddahl.AsciiSnake
 {
-	class TitledBorder : IBorder
+	public class TitledBorder : IBorder
 	{
 		private IBorder _border;
 		private string _title;
 		private string _subtitle;
 
-		public TitledBorder(IBorder border, string title, string subtitle)
+		public TitledBorder(IBorder border, IDiffFlushableCanvas canvas, IConsoleWrapper console, string title, string subtitle)
 		{
 			_border = border;
 			_title = title;
 			_subtitle = subtitle;
-			Console = _border.Console;
+			Console = console;
+			Canvas = canvas;
 		}
 
-		public IConsoleWrapper Console { get; private set; }
+		private IDiffFlushableCanvas Canvas { get; set; }
+
+		private IConsoleWrapper Console { get; set; }
 
 		private void DrawTitles()
 		{
+			//to DO: draw to canvas
 			Console.SetCursorPosition(3, 0);
 			Console.Write(_title);
 			Console.SetCursorPosition(Console.WindowWidth - _subtitle.Length - 3, Console.WindowHeight - 2);
@@ -30,20 +36,9 @@
 			DrawTitles();
 		}
 
-		public bool ContainsPosition(System.Drawing.Point position)
+		public bool ContainsPosition(Point position)
 		{
 			return _border.ContainsPosition(position);
-		}
-
-		public void Redraw()
-		{
-			_border.Redraw();
-			DrawTitles();
-		}
-
-		public bool NeedsRedraw()
-		{
-			return _border.NeedsRedraw();
 		}
 	}
 }

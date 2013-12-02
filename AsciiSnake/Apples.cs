@@ -5,91 +5,58 @@ using System.Drawing;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	class Apples : IApples
+	public class Apples : IApples
 	{
-		private Dictionary<Point, int> _apples = new Dictionary<Point, int>();
-		private List<Point> _newlyRemovedApples = new List<Point>();
-		private List<Point> _newlyAddedApples = new List<Point>();
-		private ISnake _snake;
-		private ConsoleColor _appleColor;
-		private char _appleDrawingChar;
+		private readonly Dictionary<Point, int> _apples = new Dictionary<Point, int>();
+		private readonly ISnake _snake;
 
-		public Apples(int minApples, int appleLifeTime, char appleDrawingChar, ConsoleColor appleColor, ISnake snake)
+		public Apples(IDiffFlushableCanvas canvas, IConfig config, ISnake snake, INewAppleLocationStrategy newAppleLocationStrategy)
 		{
-			MinApples = minApples;
-			AppleLifetime = appleLifeTime;
+			Config = config;
 			_snake = snake;
-			_appleColor = appleColor;
-			_appleDrawingChar = appleDrawingChar;
-			Console = _snake.Console;
+			Canvas = canvas;
+			NewAppleLocationStrategy = newAppleLocationStrategy;
 		}
 
-		public IConsoleWrapper Console { get; private set; }
+		private IDiffFlushableCanvas Canvas { get; set; }
 
-		public int AppleLifetime { get; set; }
+		private IConfig Config { get; set; }
 
-		public int MinApples { get; set; }
+		public INewAppleLocationStrategy NewAppleLocationStrategy { get; set; }
 
 		public void Draw()
 		{
-			Console.ForegroundColor = _appleColor;
+			var c = Config.AppleDrawingChar;
+			var color = Config.AppleColor;
 			foreach (var apple in _apples)
-			{
-				Console.SetCursorPosition(apple.Key.X, apple.Key.Y);
-				Console.Write(_appleDrawingChar);
-			}
-			Console.ForegroundColor = Config.DefaultConsoleForeground;
-			_newlyAddedApples.Clear();
-		}
-
-		public void Redraw()
-		{
-			if (!NeedsRedraw()) 
-				return;
-
-			Console.ForegroundColor = _appleColor;
-			foreach (var apple in _newlyRemovedApples)
-			{
-				Console.SetCursorPosition(apple.X, apple.Y);
-				Console.Write(Config.NullChar);
-			}
-			foreach (var apple in _newlyAddedApples)
-			{
-				Console.SetCursorPosition(apple.X, apple.Y);
-				Console.Write(_appleDrawingChar);
-			}
-			Console.ForegroundColor = Config.DefaultConsoleForeground;
-			_newlyRemovedApples.Clear();
-			_newlyAddedApples.Clear();
-		}
-
-		public bool NeedsRedraw()
-		{
-			return _newlyRemovedApples.Count > 0 || _newlyAddedApples.Count > 0;
+				Canvas.DrawChar(apple.Key, c, color);
 		}
 
 		public void RemoveOldApplesAndAddNewIfNeeded(int currentGameTick)
 		{
 			foreach (var apple in _apples.ToList())
 			{
-				if (currentGameTick - apple.Value > AppleLifetime)
-				{
-					_apples.Remove(apple.Key);
-					_newlyRemovedApples.Add(apple.Key);
-				}
+				if (currentGameTick - apple.Value > Config.AppleLifetime)
+					RemoveAppleAt(apple.Key);
 			}
-	
-			if (_apples.Count >= MinApples)
+
+			if (_apples.Count >= Config.MinAppleCount)
 				return;
 
-			var rand = new Random();
-			for (int i = 0; i < MinApples - _apples.Count; i++)
+			var addedApples = new List<Point>();
+			for (int i = 0; i < Config.MinAppleCount - _apples.Count; i++)
 			{
-				var newApple = new Point(rand.Next(1, Console.WindowWidth - 2), rand.Next(1, Console.WindowHeight - 3));
-				if (_apples.ContainsKey(newApple) || _snake.ContainsPosition(newApple))
-					break;
-				_apples.Add(newApple, currentGameTick);
-				_newlyAddedApples.Add(newApple);
+				var newApple = NewAppleLocationStrategy.GetNew();
+				if (_apples.ContainsKey(newApple) || addedApples.Contains(newApple) ||
+					_snake.ContainsPosition(newApple))
+				{
+					continue;
+				}
+				addedApples.Add(newApple);
+			}
+			foreach (var apple in addedApples)
+			{
+				_apples.Add(apple, currentGameTick);
 			}
 		}
 
@@ -101,7 +68,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public void RemoveAppleAt(Point position)
 		{
 			_apples.Remove(position);
-			_newlyRemovedApples.Add(position);
 		}
 	}
 }

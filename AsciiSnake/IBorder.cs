@@ -2,7 +2,7 @@
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	interface IBorder : IDrawable
+	public interface IBorder : IDrawable
 	{
 		/**
 		 * Returns whether a console cursor position collides with the border.
