@@ -16,11 +16,11 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		{
 			if (Muted)
 				return;
-			var soundThread = new Thread(new ThreadStart(() =>
-			{
-				Console.Beep(1000, 50);
-				Console.Beep(1400, 75);
-			}));
+			var soundThread = new Thread(() =>
+				{
+					Console.Beep(1000, 50);
+					Console.Beep(1400, 75);
+				});
 			soundThread.Start();
 		}
 
@@ -28,7 +28,8 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		{
 			if (Muted)
 				return;
-			var soundThread = new Thread(new ThreadStart(() => { 
+			var soundThread = new Thread(() =>
+			{
 				Console.Beep(1000, 100);
 				Console.Beep(950, 100);
 				Console.Beep(900, 100);
@@ -36,7 +37,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				Console.Beep(800, 100);
 				Console.Beep(750, 100);
 				Console.Beep(700, 100);
-			}));
+			});
 			soundThread.Start();
 		}
 	}

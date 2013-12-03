@@ -30,7 +30,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			_mockNewAppleLocationStrategy.Stub(x => x.GetNew()).Return(apple);
 			_mockSnake.Stub(x => x.ContainsPosition(Arg<Point>.Is.Anything)).Return(false);
 			_uutApples.NewAppleLocationStrategy = _mockNewAppleLocationStrategy;
-			_uutApples.RemoveOldApplesAndAddNewIfNeeded(currentGameTick);
+			_uutApples.RefreshApples(currentGameTick);
 		}
 
 

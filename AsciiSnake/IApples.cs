@@ -7,12 +7,12 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		INewAppleLocationStrategy NewAppleLocationStrategy { get; set; }
 
 		/// <summary>
-		/// Remove apples that are too old and
-		/// add new apples if there are less than configured in the MinApples property of the injected <see cref="IConfig"/> instance. 
+		/// Remove apples that are too old and add new apples if there is currently less than
+		///  configured in the MinApples property of the injected <see cref="IConfig"/> instance. 
 		/// </summary>
 		/// <remarks>Current game tick is saved with each new apple to later determine its age.</remarks>
 		/// <param name="currentGameTick">Current tick of the game.</param>
-		void RemoveOldApplesAndAddNewIfNeeded(int currentGameTick);
+		void RefreshApples(int currentGameTick);
 
 		/// <summary>
 		/// Returns whether an apple exists at the given position.

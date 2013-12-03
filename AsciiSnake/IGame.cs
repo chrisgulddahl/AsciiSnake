@@ -2,20 +2,24 @@
 {
 	interface IGame
 	{
-		/**
-		 * Number of ticks since game started.
-		 * A tick occurs every time the snake moves.
-		 */
-		int Tick { get; }
+		/// <summary>
+		/// Number of ticks since game started.A tick occurs every time the snake moves.
+		/// </summary>
+		int CurrentTick { get; }
 
-		/**
-		 * Game score (typically length of the snake)
-		 */
+		/// <summary>
+		/// Game score.
+		/// </summary>
 		int Score { get;  }
 
-		/**
-		 * Starts the game.
-		 */
+		/// <summary>
+		/// Start and run the game by repeatedly calling <see cref="Tick"/>.
+		/// </summary>
 		void Start();
+
+		/// <summary>
+		/// Run single step (tick) of the game. I.e. move the snake once, test for crashed etc.
+		/// </summary>
+		void Tick();
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -17,6 +16,8 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private IDrawable _drawables;
 		private IConfig _config;
 		private bool _quit;
+		private bool _crashed;
+		private Thread _gameThread;
 
 		public Game(IGameFactory factory)
 		{
@@ -24,13 +25,13 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			Reset();
 		}
 
-		public int Tick { get; private set; }
+		public int CurrentTick { get; private set; }
 
 		private IDiffFlushableCanvas Canvas { get; set; }
 
-		public int Score 
+		public int Score
 		{
-			get { return _snake.Length; }
+			get { return _snake.Length - 1; }
 		}
 
 		private IConsoleWrapper Console { get; set; }
@@ -56,16 +57,24 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			Console.ForegroundColor = _config.ConsoleForeground;
 			Console.Title = "ASCII Snake by chrisgulddahl.dk";
 			Console.Clear();
-			Tick = 0;
+			CurrentTick = 0;
 			_quit = false;
+			_crashed = false;
 		}
 
 		public void Start()
 		{
+			_gameThread = new Thread(Run);
+			_gameThread.Start();
+		}
+
+		private void Run()
+		{
 			// Draw game for the first time
-			_apples.RemoveOldApplesAndAddNewIfNeeded(Tick);
+			_apples.RefreshApples(CurrentTick);
 			_drawables.Draw();
 			Canvas.WriteCurrentToConsole();
+
 			// Wait for player to press a key
 			while (!Console.KeyAvailable)
 			{
@@ -75,28 +84,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				Console.RefreshWindowDimensions();
 
 			}
-
-			// Main game loop
-			while (!_quit)
+			while (!_quit && !_crashed)
 			{
 				var start = DateTime.Now.Ticks;
-				HandleKeyPress();
-				_snake.Move();
-				HandleSnakeEatingApple();
-				if (_border.ContainsPosition(_snake.Head))
-					break;
-				if (_snake.CrashedWithSelf())
-					break;
-				_apples.RemoveOldApplesAndAddNewIfNeeded(Tick);
-				_drawables.Draw();
-				Canvas.FlushChangesToConsole();
-				Tick++;
-				int elapsedTimeMs = (int)(DateTime.Now.Ticks - start)/10000;
+				Tick();
+				int elapsedTimeMs = (int)(DateTime.Now.Ticks - start) / 10000;
 				Thread.Sleep((_config.TickTime - elapsedTimeMs >= 0 ? _config.TickTime - elapsedTimeMs : 0));
 			}
 
-			// If snake crash caused breaking main loop
-			if (!_quit)
+			if (_crashed)
 			{
 				_soundManager.PlayCrashedSound();
 				DisplayCrashedMessage();
@@ -104,10 +100,26 @@ namespace dk.ChrisGulddahl.AsciiSnake
 					Thread.Sleep(10);
 				if (Console.ReadKey(true).KeyChar == 'q')
 					return;
-				
+
 				Reset();
 				Start();
 			}
+		}
+
+		public void Tick()
+		{
+			HandleKeyPress();
+			_snake.Move();
+			HandleSnakeEatingApple();
+			if (_border.ContainsPosition(_snake.Head) || _snake.CrashedWithSelf())
+			{
+				_crashed = true;
+				return;
+			}
+			_apples.RefreshApples(CurrentTick);
+			_drawables.Draw();
+			Canvas.FlushChangesToConsole();
+			CurrentTick++;
 		}
 
 		private void HandleKeyPress()

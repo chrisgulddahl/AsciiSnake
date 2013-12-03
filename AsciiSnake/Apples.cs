@@ -32,7 +32,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				Canvas.DrawChar(apple.Key, c, color);
 		}
 
-		public void RemoveOldApplesAndAddNewIfNeeded(int currentGameTick)
+		public void RefreshApples(int currentGameTick)
 		{
 			foreach (var apple in _apples.ToList())
 			{
