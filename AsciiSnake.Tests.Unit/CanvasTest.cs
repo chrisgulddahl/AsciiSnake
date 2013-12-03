@@ -11,7 +11,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 	[TestFixture]
 	class CanvasTest
 	{
-		private ICanvas _uutCanvas;
+		private IDiffableCanvas _uutDiffableCanvas;
 		private IConsoleWrapper _mockConsole;
 		private IConfig _config;
 		private MockRepository _mocks;
@@ -22,13 +22,13 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			_mocks = new MockRepository();
 			_config = new DefaultConfig();
 			_mockConsole = _mocks.DynamicMock<IConsoleWrapper>();
-			_uutCanvas = new Canvas(_mockConsole, _config);
+			_uutDiffableCanvas = new DiffableCanvas(_mockConsole, _config);
 		}
 
 		[Test]
 		public void DefaultCtor_fresh_empty()
 		{
-			var canvasCharCount = _uutCanvas.Count();
+			var canvasCharCount = _uutDiffableCanvas.Count();
 			Assert.AreEqual(0, canvasCharCount);
 		}
 
@@ -46,8 +46,8 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 		[Test]
 		public void WriteToConsole_charsAdded_consoleCalled()
 		{
-			_uutCanvas.DrawChar(new Point(2, 3), 'Z');
-			_uutCanvas.DrawChar(new Point(7, 0), '$', ConsoleColor.Blue);
+			_uutDiffableCanvas.DrawChar(new Point(2, 3), 'Z');
+			_uutDiffableCanvas.DrawChar(new Point(7, 0), '$', ConsoleColor.Blue);
 			using (_mocks.Ordered())
 			{
 				Expect.Call(() => _mockConsole.ForegroundColor = Arg<ConsoleColor>.Is.Anything).Repeat.Times(0, 1);
@@ -64,15 +64,15 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 				Expect.Call(() => _mockConsole.Write('$'));
 			}
 			_mocks.ReplayAll();
-			_uutCanvas.WriteToConsole();
+			_uutDiffableCanvas.WriteToConsole();
 			_mocks.VerifyAll();
 		}
 
 		[Test]
 		public void WriteToConsole_twoCharsOnSamePosition_onlyOneWrittenToConsole()
 		{
-			_uutCanvas.DrawChar(new Point(5, 3), 'Z');
-			_uutCanvas.DrawChar(new Point(5, 3), '$');
+			_uutDiffableCanvas.DrawChar(new Point(5, 3), 'Z');
+			_uutDiffableCanvas.DrawChar(new Point(5, 3), '$');
 
 			using (_mocks.Ordered())
 			{
@@ -83,7 +83,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			DoNotExpect.Call(()=>_mockConsole.Write('Z'));
 
 			_mocks.ReplayAll();
-			_uutCanvas.WriteToConsole();
+			_uutDiffableCanvas.WriteToConsole();
 			_mocks.VerifyAll();
 		}
 
@@ -94,16 +94,16 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			DoNotExpect.Call(() => _mockConsole.ForegroundColor = Arg<ConsoleColor>.Is.Anything);
 			DoNotExpect.Call(() => _mockConsole.Write(Arg<char>.Is.Anything));
 			_mocks.ReplayAll();
-			_uutCanvas.WriteToConsole();
+			_uutDiffableCanvas.WriteToConsole();
 			_mocks.VerifyAll();
 		}
 
 		[Test]
 		public void Diff_2newChars_bothWrittenToConsole()
 		{
-			_uutCanvas.DrawChar(new Point(1, 1), 'a');
-			_uutCanvas.DrawChar(new Point(2, 2), 'b');
-			var canvas2 = new Canvas(_mockConsole, _config);
+			_uutDiffableCanvas.DrawChar(new Point(1, 1), 'a');
+			_uutDiffableCanvas.DrawChar(new Point(2, 2), 'b');
+			var canvas2 = new DiffableCanvas(_mockConsole, _config);
 			canvas2.DrawChar(new Point(1, 1), 'a');//unchanged
 			canvas2.DrawChar(new Point(2, 2), 'b');//unchanged
 			canvas2.DrawChar(new Point(4, 1), 'c');//new chars
@@ -125,7 +125,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			DoNotExpect.Call(() => _mockConsole.Write('a'));
 			DoNotExpect.Call(() => _mockConsole.Write('b'));
 			_mocks.ReplayAll();
-			var diffCanvas = _uutCanvas.Diff(canvas2);
+			var diffCanvas = _uutDiffableCanvas.Diff(canvas2);
 			diffCanvas.WriteToConsole();
 			_mocks.VerifyAll();
 		}
@@ -133,11 +133,11 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 		[Test]
 		public void Diff_2charsRemoved_bothOverwrittenWithNullChars()
 		{
-			_uutCanvas.DrawChar(new Point(1, 1), 'a');
-			_uutCanvas.DrawChar(new Point(2, 2), 'b');
-			_uutCanvas.DrawChar(new Point(4, 1), 'c');
-			_uutCanvas.DrawChar(new Point(5, 2), 'd');
-			var canvas2 = new Canvas(_mockConsole, _config);
+			_uutDiffableCanvas.DrawChar(new Point(1, 1), 'a');
+			_uutDiffableCanvas.DrawChar(new Point(2, 2), 'b');
+			_uutDiffableCanvas.DrawChar(new Point(4, 1), 'c');
+			_uutDiffableCanvas.DrawChar(new Point(5, 2), 'd');
+			var canvas2 = new DiffableCanvas(_mockConsole, _config);
 			canvas2.DrawChar(new Point(4, 1), 'c');
 			canvas2.DrawChar(new Point(5, 2), 'd');
 			using (_mocks.Ordered())
@@ -157,7 +157,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			DoNotExpect.Call(() => _mockConsole.Write('c'));
 			DoNotExpect.Call(() => _mockConsole.Write('d'));
 			_mocks.ReplayAll();
-			var diffCanvas = _uutCanvas.Diff(canvas2);
+			var diffCanvas = _uutDiffableCanvas.Diff(canvas2);
 			diffCanvas.WriteToConsole();
 			_mocks.VerifyAll();
 		}
@@ -165,8 +165,8 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 		[Test]
 		public void Diff_charReplaced_overwritten()
 		{
-			_uutCanvas.DrawChar(new Point(5, 2), 'a', ConsoleColor.Gray);
-			var canvas2 = new Canvas(_mockConsole, _config);
+			_uutDiffableCanvas.DrawChar(new Point(5, 2), 'a', ConsoleColor.Gray);
+			var canvas2 = new DiffableCanvas(_mockConsole, _config);
 			canvas2.DrawChar(new Point(5, 2), 'b', ConsoleColor.Green);
 			using (_mocks.Ordered())
 			{
@@ -179,7 +179,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			}
 			DoNotExpect.Call(() => _mockConsole.Write(_config.NullChar));
 			_mocks.ReplayAll();
-			var diffCanvas = _uutCanvas.Diff(canvas2);
+			var diffCanvas = _uutDiffableCanvas.Diff(canvas2);
 			diffCanvas.WriteToConsole();
 			_mocks.VerifyAll();
 		}

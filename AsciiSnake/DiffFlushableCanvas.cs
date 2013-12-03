@@ -9,15 +9,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	public class DiffFlushableCanvas : IDiffFlushableCanvas
 	{
 
-		private ICanvas _flushedCanvas; //saves state of latest flushed canvas
-		private ICanvas _newCanvas; //new chars are written here - dirty until FlushChangesToConsole or WriteCurrentToConsole is called
+		private IDiffableCanvas _flushedDiffableCanvas; //saves state of latest flushed canvas
+		private IDiffableCanvas _newDiffableCanvas; //new chars are written here - dirty until FlushChangesToConsole or WriteCurrentToConsole is called
 
 		public DiffFlushableCanvas(IConsoleWrapper console, IConfig config)
 		{
 			Console = console;
 			Config = config;
-			_flushedCanvas = new Canvas(Console, Config);
-			_newCanvas = new Canvas(Console, Config);
+			_flushedDiffableCanvas = new DiffableCanvas(Console, Config);
+			_newDiffableCanvas = new DiffableCanvas(Console, Config);
 		}
 
 		private IConsoleWrapper Console { get; set; }
@@ -25,26 +25,26 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		public void FlushChangesToConsole()
 		{
-			_flushedCanvas.Diff(_newCanvas).WriteToConsole();
-			_flushedCanvas = _newCanvas;
-			_newCanvas = new Canvas(Console, Config);
+			_flushedDiffableCanvas.Diff(_newDiffableCanvas).WriteToConsole();
+			_flushedDiffableCanvas = _newDiffableCanvas;
+			_newDiffableCanvas = new DiffableCanvas(Console, Config);
 		}
 
 		public void WriteCurrentToConsole()
 		{
-			_newCanvas.WriteToConsole();
-			_flushedCanvas = _newCanvas;
-			_newCanvas = new Canvas(Console, Config);
+			_newDiffableCanvas.WriteToConsole();
+			_flushedDiffableCanvas = _newDiffableCanvas;
+			_newDiffableCanvas = new DiffableCanvas(Console, Config);
 		}
 
 		public void DrawChar(Point pos, char c)
 		{
-			_newCanvas.DrawChar(pos, c);
+			_newDiffableCanvas.DrawChar(pos, c);
 		}
 
 		public void DrawChar(Point pos, char c, ConsoleColor color)
 		{
-			_newCanvas.DrawChar(pos, c, color);
+			_newDiffableCanvas.DrawChar(pos, c, color);
 		}
 	}
 }

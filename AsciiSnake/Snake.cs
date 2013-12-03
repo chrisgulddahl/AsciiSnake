@@ -11,7 +11,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private LinkedList<Point> _positions = new LinkedList<Point>();
 		private bool _hasGrown = false;
 
-		public Snake(IDiffFlushableCanvas canvas, IConfig config, int startX, int startY)
+		public Snake(ICanvas canvas, IConfig config, int startX, int startY)
 		{
 			Canvas = canvas;
 			Config = config;
@@ -20,7 +20,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			_positions.AddLast(new Point(startX, startY));
 		}
 
-		private IDiffFlushableCanvas Canvas { get; set; }
+		private ICanvas Canvas { get; set; }
 
 		private IConfig Config { get; set; }
 
@@ -115,15 +115,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		private bool OppositeDirections(Direction dir1, Direction dir2)
 		{
-			if (dir1 == Direction.North)
-				return dir2 == Direction.South;
-			else if (dir1 == Direction.South)
-				return dir2 == Direction.North;
-			else if (dir1 == Direction.East)
-				return dir2 == Direction.West;
-			else if (dir1 == Direction.West)
-				return dir2 == Direction.East;
-			return false;
+			return ((int)dir1 + (int)dir2) == 0;
 		}
 	}
 }

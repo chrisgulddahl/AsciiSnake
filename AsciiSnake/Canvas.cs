@@ -8,11 +8,11 @@ using System.Text;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	public class Canvas : ICanvas
+	public class DiffableCanvas : IDiffableCanvas
 	{
 		private Dictionary<Point, ICanvasChar> _chars = new Dictionary<Point, ICanvasChar>();
 
-		public Canvas(IConsoleWrapper console, IConfig config)
+		public DiffableCanvas(IConsoleWrapper console, IConfig config)
 		{
 			Console = console;
 			Config = config;
@@ -32,11 +32,11 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			_chars[pos] = new CanvasChar(pos, c, color);
 		}
 
-		public ICanvas Diff(ICanvas canvasInput)
+		public IDiffableCanvas Diff(IDiffableCanvas diffableCanvasInput)
 		{
-			ICanvas diff = new Canvas(Console, Config);
+			IDiffableCanvas diff = new DiffableCanvas(Console, Config);
 			var currentTopChars = this.ToArray();
-			var inputTopChars = canvasInput.ToArray();
+			var inputTopChars = diffableCanvasInput.ToArray();
 			var addedChars = inputTopChars.Except(currentTopChars);
 			var removedChars = currentTopChars.Except(inputTopChars);
 			foreach (var canvasChar in removedChars)

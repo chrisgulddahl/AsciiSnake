@@ -10,7 +10,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private readonly Dictionary<Point, int> _apples = new Dictionary<Point, int>();
 		private readonly ISnake _snake;
 
-		public Apples(IDiffFlushableCanvas canvas, IConfig config, ISnake snake, INewAppleLocationStrategy newAppleLocationStrategy)
+		public Apples(ICanvas canvas, IConfig config, ISnake snake, INewAppleLocationStrategy newAppleLocationStrategy)
 		{
 			Config = config;
 			_snake = snake;
@@ -18,7 +18,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			NewAppleLocationStrategy = newAppleLocationStrategy;
 		}
 
-		private IDiffFlushableCanvas Canvas { get; set; }
+		private ICanvas Canvas { get; set; }
 
 		private IConfig Config { get; set; }
 

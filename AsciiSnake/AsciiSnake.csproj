@@ -57,6 +57,7 @@
     <Compile Include="IApples.cs" />
     <Compile Include="IBorder.cs" />
     <Compile Include="ICanvas.cs" />
+    <Compile Include="IDiffableCanvas.cs" />
     <Compile Include="ICanvasChar.cs" />
     <Compile Include="IConfig.cs" />
     <Compile Include="IDiffFlushableCanvas.cs" />

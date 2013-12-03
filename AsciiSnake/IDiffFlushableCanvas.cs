@@ -6,23 +6,16 @@ using System.Text;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	public interface IDiffFlushableCanvas
+	public interface IDiffFlushableCanvas : ICanvas
 	{
-		/**
-		 * Write changes (since last call of FlushChangesToConsole) to console.
-		 */
+		/// <summary>
+		/// Write changes (since last call of FlushChangesToConsole) to console.
+		/// </summary>
 		void FlushChangesToConsole();
 
-		/**
-		 * Write entire canvas to console including any pending changes.
-		 */
+		/// <summary>
+		/// Write entire canvas to console including any pending changes.
+		/// </summary>
 		void WriteCurrentToConsole();
-
-		/**
-		 * Draw character on canvas using default color
-		 */
-		void DrawChar(Point pos, char c);
-
-		void DrawChar(Point pos, char c, ConsoleColor color);
 	}
 }

@@ -7,7 +7,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private int _consoleHeightAtLastDraw = 0;
 		private int _consoleWidthAtLastDraw = 0;
 
-		public Border(IConsoleWrapper console, IDiffFlushableCanvas canvas, IConfig config)
+		public Border(IConsoleWrapper console, ICanvas canvas, IConfig config)
 		{
 			Console = console;
 			Config = config;
@@ -16,7 +16,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		private IConsoleWrapper Console { get; set; }
 
-		private IDiffFlushableCanvas Canvas { get; set; }
+		private ICanvas Canvas { get; set; }
 
 		private IConfig Config { get; set; }
 
