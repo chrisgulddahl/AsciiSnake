@@ -1,26 +1,27 @@
-﻿namespace dk.ChrisGulddahl.AsciiSnake
+﻿using System.Drawing;
+
+namespace dk.ChrisGulddahl.AsciiSnake
 {
 	class BorderWithScore : IBorder
 	{
 		private IBorder _border;
 		private IGame _game;
-		private int _score;
 
-		public BorderWithScore(IBorder border, IGame game, IConsoleWrapper console)
+		public BorderWithScore(IBorder border, IGame game, ICanvas canvas, IConfig config)
 		{
 			_border = border;
 			_game = game;
-			Console = console;
-			_score = 0;
+			Canvas = canvas;
+			Config = config;
 		}
 
-		public IConsoleWrapper Console { get; private set; }
+		private ICanvas Canvas { get; set; }
+
+		private IConfig Config { get; set; }
 
 		private void DrawScore()
 		{
-			_score = _game.Score;
-			Console.SetCursorPosition(3, Console.WindowHeight - 2);
-			Console.Write("Score: " + _score);
+			Canvas.DrawString("Score: " + _game.Score, new Point(3, Canvas.Height - 2), Direction.East, Config.ConsoleForeground);
 		}
 
 		public void Draw()
@@ -29,7 +30,7 @@
 			DrawScore();
 		}
 
-		public bool ContainsPosition(System.Drawing.Point position)
+		public bool ContainsPosition(Point position)
 		{
 			return _border.ContainsPosition(position);
 		}

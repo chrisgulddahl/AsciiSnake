@@ -31,13 +31,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		public IBorder CreateBorder(IGame game)
 		{
-			return new TitledBorder(
-					new Border(Console, DiffFlushableCanvas, Config), DiffFlushableCanvas, Console, "ASCII Snake. Source code at chrisgulddahl.dk", "[W] [A] [S] [D] Control. [Q] Quit. [M] Mute"); //TO DO: FIX!!!!!!!!
+			return new BorderWithScore(
+				new TitledBorder(
+					new Border(DiffFlushableCanvas, Config), DiffFlushableCanvas, Config, "ASCII Snake. Source code at chrisgulddahl.dk", "[W] [A] [S] [D] Control. [Q] Quit. [M] Mute")
+					, game, DiffFlushableCanvas, Config);
 		}
 
 		public ISnake CreateSnake(IConsoleWrapper console)
 		{
-			return new Snake(DiffFlushableCanvas, Config, console.WindowWidth/2, console.WindowHeight/2);
+			return new Snake(DiffFlushableCanvas, Config, console.WindowWidth / 2, console.WindowHeight / 2);
 		}
 
 		public IApples CreateApples(ISnake snake)

@@ -46,7 +46,7 @@
     <Compile Include="Apples.cs" />
     <Compile Include="Border.cs" />
     <Compile Include="BorderWithScore.cs" />
-    <Compile Include="Canvas.cs" />
+    <Compile Include="DiffableCanvas.cs" />
     <Compile Include="CanvasChar.cs" />
     <Compile Include="CompositeDrawable.cs" />
     <Compile Include="DefaultConfig.cs" />

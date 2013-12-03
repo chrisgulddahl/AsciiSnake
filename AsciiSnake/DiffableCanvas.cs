@@ -22,6 +22,10 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		private IConsoleWrapper Console { get; set; }
 
+		public int Height { get { return Console.WindowHeight; } }
+
+		public int Width { get { return Console.WindowWidth; } }
+
 		public void DrawChar(Point pos, char c)
 		{
 			DrawChar(pos, c, Config.ConsoleForeground);
@@ -30,6 +34,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public void DrawChar(Point pos, char c, ConsoleColor color)
 		{
 			_chars[pos] = new CanvasChar(pos, c, color);
+		}
+
+		public void DrawString(string str, Point pos, Direction direction, ConsoleColor color)
+		{
+			foreach (var c in str.ToCharArray())
+			{
+				_chars[pos] = new CanvasChar(pos, c, color);
+				pos = DirectionUtil.OffsetPosition(pos, direction);
+			}
 		}
 
 		public IDiffableCanvas Diff(IDiffableCanvas diffableCanvasInput)

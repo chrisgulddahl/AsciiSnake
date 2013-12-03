@@ -16,7 +16,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			Canvas = canvas;
 			Config = config;
 			Direction = Direction.None;
-			Crashed = false;
 			_positions.AddLast(new Point(startX, startY));
 		}
 
@@ -24,14 +23,12 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		private IConfig Config { get; set; }
 
-		public bool Crashed { get; set; }
-
 		public Direction Direction
 		{
 			get { return _direction; }
 			set
 			{
-				if (!OppositeDirections(_direction, value))
+				if (!DirectionUtil.AreOpposite(_direction, value))
 				{
 					_direction = value;
 				}
@@ -66,21 +63,10 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			if (Direction == Direction.None)
 				return;
 
-			Point oldHead = Head;
+			_positions.AddFirst(DirectionUtil.OffsetPosition(Head, Direction));
 			if (!_hasGrown)
 			{
 				_positions.RemoveLast();
-			}
-			switch (Direction)
-			{
-				case Direction.North: _positions.AddFirst(new Point(oldHead.X, oldHead.Y - 1));
-					break;
-				case Direction.South: _positions.AddFirst(new Point(oldHead.X, oldHead.Y + 1));
-					break;
-				case Direction.West: _positions.AddFirst(new Point(oldHead.X - 1, oldHead.Y));
-					break;
-				case Direction.East: _positions.AddFirst(new Point(oldHead.X + 1, oldHead.Y));
-					break;
 			}
 			_hasGrown = false;
 		}
@@ -104,11 +90,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public bool ContainsPosition(Point position)
 		{
 			return _positions.Contains(position);
-		}
-
-		private bool OppositeDirections(Direction dir1, Direction dir2)
-		{
-			return ((int)dir1 + (int)dir2) == 0;
 		}
 	}
 }

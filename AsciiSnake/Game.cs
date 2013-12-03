@@ -42,7 +42,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private void Reset()
 		{
 			//Remember state
-			var isMuted = (_soundManager != null ? _soundManager.Muted : false);
+			var isMuted = (_soundManager != null && _soundManager.Muted);
 
 			//Reset
 			_config = _factory.Config;
@@ -67,12 +67,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public void Start()
 		{
 			// Draw game for the first time
+			_apples.RemoveOldApplesAndAddNewIfNeeded(Tick);
 			_drawables.Draw();
 			Canvas.WriteCurrentToConsole();
 			// Wait for player to press a key
 			while (!Console.KeyAvailable)
 			{
 				Thread.Sleep(10);
+				_drawables.Draw();
+				Canvas.FlushChangesToConsole();
 				Console.RefreshWindowDimensions();
 
 			}

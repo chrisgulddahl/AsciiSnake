@@ -5,41 +5,44 @@ namespace dk.ChrisGulddahl.AsciiSnake
 {
 	public interface ISnake : IDrawable
 	{
-		bool Crashed { get; set; }
 
-		/**
-		 * Property used for setting the direction of the snake to North, East, South, West or None.
-		 */
+		/// <summary>
+		/// Direction of the snake.
+		/// </summary>
+		/// <seealso cref="Direction"/>
 		Direction Direction { get; set; }
 
-		/**
-		 * Length of the snake
-		 */
+		/// <summary>
+		/// Length of snake.
+		/// </summary>
 		int Length { get;  }
 
-		/**
-		 * Coordinates of the head of the snake. Used for hit testing.
-		 */
+		/// <summary>
+		/// Coordinates of the head of the snake. Used for hit testing.
+		/// </summary>
 		Point Head { get; }
 
-		/**
-		 * Move the snake once according to its current direction. If current direction is "None" the snake shouldn't move.
-		 */
+		/// <summary>
+		/// Move the snake once according to its current direction. If current direction is "None" the snake does not move.
+		/// </summary>
 		void Move();
 
-		/**
-		 * Grow the snake a bit longer
-		 */
+		/// <summary>
+		/// Grow the snake a bit longer.
+		/// </summary>
 		void Grow();
 
-		/**
-		 * Returns whether the snake head has crashed with its body
-		 */
+		/// <summary>
+		/// Returns true if the snake head has crashed with its body. False otherwise.
+		/// </summary>
+		/// <returns></returns>
 		bool CrashedWithSelf();
 
-		/**
-		 * Returns whether the snake currently occupies the given coordinate
-		 */
+		/// <summary>
+		/// Returns whether any part of the snake currently occupies the given position.
+		/// </summary>
+		/// <param name="position">Position to test for.</param>
+		/// <returns>Returns true if any part of the snake currently occupies the given position. False otherwise.</returns>
 		bool ContainsPosition(Point position);
 	}
 }
