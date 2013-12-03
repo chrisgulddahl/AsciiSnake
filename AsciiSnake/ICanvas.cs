@@ -6,32 +6,47 @@ using System.Text;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	public interface ICanvas : IEnumerable<IEnumerable<ICanvasChar>>, ICloneable
+	public interface ICanvas : IEnumerable<ICanvasChar>
 	{
-		/**
-		 * Draw character on canvas using default color
-		 */
-		void DrawChar(Point pos, char c);
+		/// <summary>
+		/// Draw a character to canvas using default color.
+		/// </summary>
+		/// <remarks>
+		/// Default color is configured in the injected <see cref="IConfig"/> instance.
+		/// IConfig instance is injected in <see cref="DefaultGameFactory"/>.
+		/// </remarks>
+		/// <param name="pos">Position of character.</param>
+		/// <param name="character">Character to be drawn.</param>
+		void DrawChar(Point pos, char character);
 
-		void DrawChar(Point pos, char c, ConsoleColor color);
+		/// <summary>
+		/// Draw a character to canvas using specified color.
+		/// </summary>
+		/// <param name="pos">Position of character.</param>
+		/// <param name="character">Character to be drawn.</param>
+		/// <param name="color">Color of character.</param>
+		void DrawChar(Point pos, char character, ConsoleColor color);
 
-		/**
-		 * Returns the most recently added ICanvasChar on given position
-		 */
-		ICanvasChar TopCharAtPos(Point pos);
+		/// <summary>
+		/// Returns the difference between the canvas on which Diff is called 
+		/// (referred to as canvas1) and the argument canvas (referred to as canvas2.
+		/// I.e. writing the diff canvas to a console already containing canvas1
+		/// corresponds exactly to writing canvas2 to an empty console in terms 
+		/// of what will be visible on the console.
+		/// The diff canvas consists of the characters on canvas2 that are new
+		/// compared to canvas1 and for each deleted character (the characters that 
+		/// canvas1 has but not canvas2) a null-char.
+		/// </summary>
+		/// <param name="canvas2">The canvas to compare the called canvas with.</param>
+		/// <returns>The diff canvas between the called canvas and the argument canvas.</returns>
+		ICanvas Diff(ICanvas canvas2);
 
-		void Reset();
-
-		/**
-		 * Returns the CanvasChars to be added to the caller for it to be equal to
-		 * the argument canvas in terms of how they are written to console.
-		 * Missing/deleted chars is represented by a null-char.
-		 * I.e. writing the calling canvas to console and afterwards writing the
-		 * diff canvas to console corresponds exactly to writing the argument canvas to a 
-		 * clear console in terms of what will be visible on the console.
-		 */
-		ICanvas Diff(ICanvas canvas);
-
+		/// <summary>
+		/// Write all canvas characters to console.
+		/// </summary>
+		/// <remarks>
+		/// If multiple characters have been written to the canvas on the same position the latest one will be written to console.
+		/// </remarks>
 		void WriteToConsole();
 	}
 }

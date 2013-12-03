@@ -19,11 +19,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		void WriteCurrentToConsole();
 
 		/**
-		 * Clear changes to canvas. After calling ClearChanges a call to FlushChangesToConsole will do nothing.
-		 */
-		void ClearChangesToCanvas();
-
-		/**
 		 * Draw character on canvas using default color
 		 */
 		void DrawChar(Point pos, char c);

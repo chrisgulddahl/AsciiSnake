@@ -10,7 +10,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	{
 
 		private ICanvas _flushedCanvas; //saves state of latest flushed canvas
-		private readonly ICanvas _newCanvas; //new chars are written here - dirty until FlushChangesToConsole or WriteCurrentToConsole is called
+		private ICanvas _newCanvas; //new chars are written here - dirty until FlushChangesToConsole or WriteCurrentToConsole is called
 
 		public DiffFlushableCanvas(IConsoleWrapper console, IConfig config)
 		{
@@ -26,20 +26,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public void FlushChangesToConsole()
 		{
 			_flushedCanvas.Diff(_newCanvas).WriteToConsole();
-			_flushedCanvas = (Canvas)_newCanvas.Clone();
-			_newCanvas.Reset();
+			_flushedCanvas = _newCanvas;
+			_newCanvas = new Canvas(Console, Config);
 		}
 
 		public void WriteCurrentToConsole()
 		{
 			_newCanvas.WriteToConsole();
-			_flushedCanvas = (Canvas)_newCanvas.Clone();
-			_newCanvas.Reset();
-		}
-
-		public void ClearChangesToCanvas()
-		{
-			_newCanvas.Reset();
+			_flushedCanvas = _newCanvas;
+			_newCanvas = new Canvas(Console, Config);
 		}
 
 		public void DrawChar(Point pos, char c)

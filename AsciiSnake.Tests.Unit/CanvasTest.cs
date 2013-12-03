@@ -32,7 +32,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			Assert.AreEqual(0, canvasCharCount);
 		}
 
-		[Test]
+		/*[Test]
 		public void DrawChar_fresh_containsChar()
 		{
 			_uutCanvas.DrawChar(new Point(2, 3), 'Z', ConsoleColor.Cyan);
@@ -41,7 +41,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			Assert.AreEqual(new Point(2, 3), charAtPos.Position);
 			Assert.AreEqual(ConsoleColor.Cyan, charAtPos.Color);
 			Assert.AreEqual('Z', charAtPos.Character);
-		}
+		}*/
 
 		[Test]
 		public void WriteToConsole_charsAdded_consoleCalled()
@@ -184,7 +184,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			_mocks.VerifyAll();
 		}
 
-		[Test]
+		/*[Test]
 		public void Clone_nonEmpty_returnsShallowClone()
 		{
 			_uutCanvas.DrawChar(new Point(1, 1), 'a');
@@ -195,6 +195,6 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			var pos2Char = clone.TopCharAtPos(new Point(2, 2));
 			Assert.AreEqual('a', pos1Char.Character);
 			Assert.AreEqual('b', pos2Char.Character);
-		}
+		}*/
 	}
 }

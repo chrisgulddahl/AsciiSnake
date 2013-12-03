@@ -22,7 +22,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public Game(IGameFactory factory)
 		{
 			_factory = factory;
-			Reset(false);
+			Reset();
 		}
 
 		public int Tick { get; private set; }
@@ -39,8 +39,12 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			get { return _console; }
 		}
 
-		private void Reset(bool setMuted)
+		private void Reset()
 		{
+			//Remember state
+			var isMuted = (_soundManager != null ? _soundManager.Muted : false);
+
+			//Reset
 			_config = _factory.Config;
 			_console = _factory.Console;
 			Canvas = _factory.DiffFlushableCanvas;
@@ -48,7 +52,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			_snake = _factory.CreateSnake(Console);
 			_apples = _factory.CreateApples(_snake);
 			_soundManager = _factory.CreateSoundManager();
-			_soundManager.Muted = setMuted;
+			_soundManager.Muted = isMuted;
 			_drawables = new CompositeDrawable(new List<IDrawable> { _border, _apples, _snake });
 			Console.OutputEncoding = Encoding.ASCII;
 			Console.CursorVisible = false;
@@ -102,7 +106,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				if (Console.ReadKey(true).KeyChar == 'q')
 					return;
 				
-				Reset(_soundManager.Muted);
+				Reset();
 				Start();
 			}
 		}

@@ -113,7 +113,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			_mocks.VerifyAll();
 		}
 
-		[Test]
+		/*[Test]
 		public void ClearChangesToCanvas_NewChar_NoCallsToConsole()
 		{
 			using (_mocks.Record())
@@ -125,7 +125,7 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 			_diffFlushableCanvas.ClearChangesToCanvas();
 			_diffFlushableCanvas.FlushChangesToConsole();
 			_mocks.VerifyAll();
-		}
+		}*/
 
 		[Test]
 		public void WriteCurrentToConsole_ChangedChars_RewrittenToConsole()

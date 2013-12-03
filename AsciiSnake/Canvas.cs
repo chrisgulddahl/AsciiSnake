@@ -10,7 +10,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 {
 	public class Canvas : ICanvas
 	{
-		private Dictionary<Point, LinkedList<ICanvasChar>> _chars = new Dictionary<Point, LinkedList<ICanvasChar>>();
+		private Dictionary<Point, ICanvasChar> _chars = new Dictionary<Point, ICanvasChar>();
 
 		public Canvas(IConsoleWrapper console, IConfig config)
 		{
@@ -29,35 +29,14 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		public void DrawChar(Point pos, char c, ConsoleColor color)
 		{
-			var newCanvasChar = new CanvasChar(pos, c, color);
-			if (_chars.ContainsKey(pos))
-			{
-				var bucket = _chars[pos];
-				bucket.AddFirst(newCanvasChar);
-			}
-			else
-			{
-				var bucket = new LinkedList<ICanvasChar>();
-				bucket.AddFirst(newCanvasChar);
-				_chars.Add(pos, bucket);
-			}
-		}
-
-		public ICanvasChar TopCharAtPos(Point pos)
-		{
-			return _chars.ContainsKey(pos) ? _chars[pos].First.Value : null;
-		}
-
-		public void Reset()
-		{
-			_chars = new Dictionary<Point, LinkedList<ICanvasChar>>();
+			_chars[pos] = new CanvasChar(pos, c, color);
 		}
 
 		public ICanvas Diff(ICanvas canvasInput)
 		{
 			ICanvas diff = new Canvas(Console, Config);
-			var currentTopChars = this.Select(l => l.First()).ToArray();
-			var inputTopChars = canvasInput.Select(l => l.First()).ToArray();
+			var currentTopChars = this.ToArray();
+			var inputTopChars = canvasInput.ToArray();
 			var addedChars = inputTopChars.Except(currentTopChars);
 			var removedChars = currentTopChars.Except(inputTopChars);
 			foreach (var canvasChar in removedChars)
@@ -71,8 +50,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			return diff;
 		}
 
-
-		public IEnumerator<IEnumerable<ICanvasChar>> GetEnumerator()
+		public IEnumerator<ICanvasChar> GetEnumerator()
 		{
 			return _chars.Values.GetEnumerator();
 		}
@@ -82,28 +60,14 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			return _chars.Values.GetEnumerator();
 		}
 
-
 		public void WriteToConsole()
 		{
-			foreach (var firstChar in _chars.Select(pointCanvasChar => pointCanvasChar.Value.First.Value))
+			foreach (var firstChar in _chars.Select(pointCanvasChar => pointCanvasChar.Value))
 			{
 				Console.ForegroundColor = firstChar.Color;
 				Console.SetCursorPosition(firstChar.Position.X, firstChar.Position.Y);
 				Console.Write(firstChar.Character);
-				//System.Console.WriteLine(firstChar.Character + " at " + firstChar.Position);
 			}
-		}
-
-		public void SetData(Dictionary<Point, LinkedList<ICanvasChar>> chars)
-		{
-			_chars = chars;
-		}
-
-		public object Clone()
-		{
-			var clone = new Canvas(Console, Config);
-			clone.SetData(_chars);
-			return clone;
 		}
 	}
 }
