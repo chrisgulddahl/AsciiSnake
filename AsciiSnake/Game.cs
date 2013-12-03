@@ -162,7 +162,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 					"Final score: " + Score,
 					"Press Q to quit. Press any other key to restart"
 				};
-			int messageBoxWidth = lines.Aggregate<string, int>(0, (maxLength, line) => (Math.Max(line.Length, maxLength)));
+			int messageBoxWidth = lines.Aggregate(0, (maxLength, line) => (Math.Max(line.Length, maxLength)));
 			int messageBoxHeight = lines.Count;
 			int messageBoxLeft = (Console.WindowWidth - messageBoxWidth) / 2;
 			int messageBoxTop = (Console.WindowHeight - messageBoxHeight) / 2;
