@@ -3,11 +3,6 @@
 	interface IGame
 	{
 		/**
-		 * Wrapper for the console that among other things allow for better testing.
-		 */
-		IConsoleWrapper Console { get; }
-
-		/**
 		 * Number of ticks since game started.
 		 * A tick occurs every time the snake moves.
 		 */

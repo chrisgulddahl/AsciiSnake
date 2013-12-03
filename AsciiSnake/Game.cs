@@ -10,7 +10,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	class Game : IGame
 	{
 		private readonly IGameFactory _factory;
-		private IConsoleWrapper _console;
 		private IBorder _border;
 		private ISnake _snake;
 		private IApples _apples;
@@ -34,10 +33,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			get { return _snake.Length; }
 		}
 
-		public IConsoleWrapper Console
-		{
-			get { return _console; }
-		}
+		private IConsoleWrapper Console { get; set; }
 
 		private void Reset()
 		{
@@ -46,7 +42,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 			//Reset
 			_config = _factory.Config;
-			_console = _factory.Console;
+			Console = _factory.Console;
 			Canvas = _factory.DiffFlushableCanvas;
 			_border = _factory.CreateBorder(this);
 			_snake = _factory.CreateSnake(Console);
@@ -146,7 +142,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			}
 		}
 
-		private void DisplayCrashedMessage()
+		private void DisplayCrashedMessage() //TODO: draw using canvas
 		{
 			var lines = new List<string>
 				{
