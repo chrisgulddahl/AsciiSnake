@@ -50,8 +50,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		public void Draw()
 		{
-			if (!NeedsRedraw())
-				return;
 			var snakeColor = Config.SnakeColor;
 			var snakeBodyChar = Config.SnakeBodyDrawingChar;
 			Canvas.DrawChar(Head, Config.SnakeHeadDrawingChar, snakeColor);
@@ -61,11 +59,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				Canvas.DrawChar(elem.Value, snakeBodyChar, snakeColor);
 				elem = elem.Next;
 			}
-		}
-
-		public bool NeedsRedraw()
-		{
-			return true;
 		}
 
 		public void Move()

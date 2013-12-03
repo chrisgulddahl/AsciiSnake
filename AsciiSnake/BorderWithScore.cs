@@ -33,17 +33,5 @@
 		{
 			return _border.ContainsPosition(position);
 		}
-
-		public void Redraw()
-		{
-			//_border.Redraw();
-			DrawScore();
-		}
-
-		public bool NeedsRedraw()
-		{
-			//return _border.NeedsRedraw() || _game.Score != _score;
-			return false;
-		}
 	}
 }
