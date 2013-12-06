@@ -8,52 +8,55 @@ namespace dk.ChrisGulddahl.AsciiSnake
 {
 	public class DiffFlushableCanvas : IDiffFlushableCanvas
 	{
-
+		private readonly IDiffableCanvasFactory _canvasFactory;
 		private IDiffableCanvas _flushedCanvas; //saves state of latest flushed canvas
-		private IDiffableCanvas _newCanvas; //new chars are written here - dirty until FlushChangesToConsole or WriteCurrentToConsole is called
+		private IDiffableCanvas _dirtyCanvas; //new chars are written here - dirty until FlushChangesToConsole or WriteCurrentToConsole is called
 
-		public DiffFlushableCanvas(IConsoleWrapper console, IConfig config)
+		public DiffFlushableCanvas(IConfig config, IDiffableCanvasFactory canvasFactory)
 		{
-			Console = console;
 			Config = config;
-			_flushedCanvas = new DiffableCanvas(Console, Config);
-			_newCanvas = new DiffableCanvas(Console, Config);
+			_canvasFactory = canvasFactory;
+			_flushedCanvas = _canvasFactory.Create();
+			_dirtyCanvas = _canvasFactory.Create();
 		}
 
-		private IConsoleWrapper Console { get; set; }
 		private IConfig Config { get; set; }
 
-		public void FlushChangesToConsole()
+		public void FlushChanges()
 		{
-			_flushedCanvas.Diff(_newCanvas).WriteToConsole();
-			_flushedCanvas = _newCanvas;
-			_newCanvas = new DiffableCanvas(Console, Config);
+			_flushedCanvas.Diff(_dirtyCanvas).WriteToConsole();
+			PersistDirty();
 		}
 
-		public void WriteCurrentToConsole()
+		public void WriteCurrent()
 		{
-			_newCanvas.WriteToConsole();
-			_flushedCanvas = _newCanvas;
-			_newCanvas = new DiffableCanvas(Console, Config);
+			_dirtyCanvas.WriteToConsole();
+			PersistDirty();
 		}
 
-		public int Height { get { return _newCanvas.Height; } }
+		public int Height { get { return _dirtyCanvas.Height; } }
 
-		public int Width { get { return _newCanvas.Width; } }
+		public int Width { get { return _dirtyCanvas.Width; } }
 
 		public void DrawChar(Point pos, char c)
 		{
-			_newCanvas.DrawChar(pos, c);
+			_dirtyCanvas.DrawChar(pos, c);
 		}
 
 		public void DrawChar(Point pos, char c, ConsoleColor color)
 		{
-			_newCanvas.DrawChar(pos, c, color);
+			_dirtyCanvas.DrawChar(pos, c, color);
 		}
 
 		public void DrawString(string str, Point startPos, Direction direction, ConsoleColor color)
 		{
-			_newCanvas.DrawString(str, startPos, direction, color);
+			_dirtyCanvas.DrawString(str, startPos, direction, color);
+		}
+
+		private void PersistDirty()
+		{
+			_flushedCanvas = _dirtyCanvas;
+			_dirtyCanvas = _canvasFactory.Create();
 		}
 	}
 }

@@ -6,10 +6,10 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	{
 		public DefaultGameFactory()
 		{
-			/*Initialize singletons*/
+			/*Initialize single instances*/
 			Config = new DefaultConfig();
 			Console = new ConsoleWrapper();
-			DiffFlushableCanvas = new DiffFlushableCanvas(Console, Config);
+			DiffFlushableCanvas = new DiffFlushableCanvas(Config, new DiffableDiffableCanvasFactory(Console, Config));
 		}
 
 		public IConfig Config { get; private set; }

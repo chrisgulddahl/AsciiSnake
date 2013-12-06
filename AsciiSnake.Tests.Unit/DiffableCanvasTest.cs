@@ -9,7 +9,7 @@ using Rhino.Mocks;
 namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 {
 	[TestFixture]
-	class CanvasTest
+	class DiffableCanvasTest
 	{
 		private IDiffableCanvas _uutDiffableCanvas;
 		private IConsoleWrapper _mockConsole;

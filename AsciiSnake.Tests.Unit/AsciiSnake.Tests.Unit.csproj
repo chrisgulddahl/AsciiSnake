@@ -51,7 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ApplesTest.cs" />
-    <Compile Include="CanvasTest.cs" />
+    <Compile Include="DiffableCanvasTest.cs" />
     <Compile Include="DiffFlushableCanvasTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SnakeTest.cs" />

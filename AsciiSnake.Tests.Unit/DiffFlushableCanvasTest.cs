@@ -13,140 +13,91 @@ namespace dk.ChrisGulddahl.AsciiSnake.Tests.Unit
 	{
 		private IDiffFlushableCanvas _diffFlushableCanvas;
 		private IConfig _config;
-		private IConsoleWrapper _mockConsole;
+		private StubCanvasFactory _stubCanvasFactory;
 		private MockRepository _mocks;
+
+		class StubCanvasFactory : IDiffableCanvasFactory
+		{
+			private int callCount = 0;
+			private MockRepository mocks;
+			public IDiffableCanvas flushedCavnas;
+			public IDiffableCanvas dirtyCanvas;
+			public StubCanvasFactory(MockRepository mocks)
+			{
+				this.mocks = mocks;
+				flushedCavnas = mocks.DynamicMock<IDiffableCanvas>();
+				dirtyCanvas = mocks.DynamicMock<IDiffableCanvas>();
+			}
+
+			public IDiffableCanvas Create()
+			{
+				// TODO: ISSUE - changing order of cases will break test!
+				callCount++;
+				switch (callCount)
+				{
+					case 1:
+						return flushedCavnas;
+					case 2:
+						return dirtyCanvas;
+					default:
+						return mocks.DynamicMock<IDiffableCanvas>();
+				}
+			}
+		}
 
 		[SetUp]
 		public void Setup()
 		{
 			_mocks = new MockRepository();
 			_config = new DefaultConfig();
-			_mockConsole = _mocks.DynamicMock<IConsoleWrapper>();
-			_diffFlushableCanvas = new DiffFlushableCanvas(_mockConsole, _config);
+			_stubCanvasFactory = new StubCanvasFactory(_mocks);
+			_diffFlushableCanvas = new DiffFlushableCanvas(_config, _stubCanvasFactory);
 		}
 
 		[Test]
-		public void FlushChangesToConsole_NothingDrawn_NothingWrittenToConsole()
+		public void FlushChanges_NothingDrawn_WriteToConsoleCalledOnDiff()
 		{
-			DoNotExpect.Call(()=>_mockConsole.Write(Arg<char>.Is.Anything));
+			// Setup empty diff canvas stub to be returned by calls to Diff() on flushedCavnas
+			IDiffableCanvas mockDiffCanvas = _mocks.DynamicMock<IDiffableCanvas>();
+			mockDiffCanvas.Stub(x => x.GetEnumerator()).Return(((IEnumerable<ICanvasChar>)new ICanvasChar[0]).GetEnumerator());
+			_stubCanvasFactory.flushedCavnas.Stub(x => x.Diff(null)).Return(mockDiffCanvas).IgnoreArguments();
 			_mocks.ReplayAll();
-			_diffFlushableCanvas.FlushChangesToConsole();
-			_mocks.VerifyAll();
+			_diffFlushableCanvas.FlushChanges();
+			mockDiffCanvas.AssertWasCalled(x=>x.WriteToConsole());
 		}
 
 		[Test]
-		public void FlushChangesToConsole_NewCharsDrawn_CharsWrittenToConsole()
+		public void WriteCurrent_NothingDrawn_WriteToConsoleCalledOnDirty()
 		{
-			using (_mocks.Ordered())
-			{
-				using (_mocks.Unordered())
-				{
-					_mockConsole.SetCursorPosition(0, 0);
-					_mockConsole.ForegroundColor = ConsoleColor.Magenta;
-				}
-				_mockConsole.Write('a');
-			}
-			using (_mocks.Ordered())
-			{
-				_mockConsole.SetCursorPosition(4, 23);
-				_mockConsole.Write('b');
-			}
 			_mocks.ReplayAll();
-			_diffFlushableCanvas.DrawChar(new Point(0, 0), 'a', ConsoleColor.Magenta);
-			_diffFlushableCanvas.DrawChar(new Point(4, 23), 'b');
-			_diffFlushableCanvas.FlushChangesToConsole();
-			_mocks.VerifyAll();
+			_diffFlushableCanvas.WriteCurrent();
+			_stubCanvasFactory.dirtyCanvas.AssertWasCalled(x => x.WriteToConsole());
 		}
 
 		[Test]
-		public void FlushChangesToConsole_UnchangedChars_NothingWrittenToConsole()
+		public void WriteCurrent_NothingDrawn_FlushedCanvasSetToPreviousDirtyCanvas()
 		{
-			_diffFlushableCanvas.DrawChar(new Point(0, 0), 'a');
-			_diffFlushableCanvas.DrawChar(new Point(4, 23), 'b');
-			_diffFlushableCanvas.FlushChangesToConsole();
+			// Setup empty diff canvas stub to be returned by calls to Diff()
+			IDiffableCanvas stubDiffCanvas = _mocks.DynamicMock<IDiffableCanvas>();
+			_stubCanvasFactory.dirtyCanvas.Stub(x => x.Diff(null)).Return(stubDiffCanvas).IgnoreArguments();
+			_diffFlushableCanvas.WriteCurrent(); // Persist dirty canvas and set dirty canvas to blank
 
-			_mocks.BackToRecordAll();
-			using (_mocks.Record())
-			{
-				DoNotExpect.Call(() => _mockConsole.Write(Arg<char>.Is.Anything));
-			}
 			_mocks.ReplayAll();
-			_diffFlushableCanvas.DrawChar(new Point(0, 0), 'a'); //Write same chars
-			_diffFlushableCanvas.DrawChar(new Point(4, 23), 'b');//Write same chars
-			_diffFlushableCanvas.FlushChangesToConsole(); //Should not cause anything to be written since, the chars are already flushed to console
-			_mocks.VerifyAll();
+			_diffFlushableCanvas.FlushChanges(); // Expect: Diff(..) called on previously dirty canvas
+			_stubCanvasFactory.dirtyCanvas.AssertWasCalled(x => x.Diff(Arg<IDiffableCanvas>.Is.Anything));
 		}
 
 		[Test]
-		public void FlushChangesToConsole_ChangedChar_NewCharWrittenToConsole()
+		public void WriteCurrent_NothingDrawn_DirtyCanvasSetToBlankCanvas()
 		{
-			_diffFlushableCanvas.DrawChar(new Point(4, 23), 'b');
-			_diffFlushableCanvas.FlushChangesToConsole();
+			// Setup empty diff canvas stub to be returned by calls to Diff()
+			IDiffableCanvas stubDiffCanvas = _mocks.DynamicMock<IDiffableCanvas>();
+			_stubCanvasFactory.dirtyCanvas.Stub(x => x.Diff(null)).Return(stubDiffCanvas).IgnoreArguments();
+			_diffFlushableCanvas.WriteCurrent(); // Persist dirty canvas and set dirty canvas to blank
 
-			_mocks.BackToRecordAll();
-			using (_mocks.Ordered())
-			{
-				_mockConsole.SetCursorPosition(4,23);
-				_mockConsole.Write('c');
-			}
 			_mocks.ReplayAll();
-			_diffFlushableCanvas.DrawChar(new Point(4, 23), 'c');
-			_diffFlushableCanvas.FlushChangesToConsole();
-			_mocks.VerifyAll();
-		}
-
-
-		[Test]
-		public void FlushChangesToConsole_RemovedChar_NullCharWrittenToConsole()
-		{
-			_diffFlushableCanvas.DrawChar(new Point(4, 23), 'b');
-			_diffFlushableCanvas.FlushChangesToConsole();
-
-			_mocks.BackToRecordAll();
-			using (_mocks.Ordered())
-			{
-				_mockConsole.SetCursorPosition(4, 23);
-				_mockConsole.Write(_config.NullChar);
-			}
-			_mocks.ReplayAll();
-			_diffFlushableCanvas.FlushChangesToConsole();
-			_mocks.VerifyAll();
-		}
-
-		/*[Test]
-		public void ClearChangesToCanvas_NewChar_NoCallsToConsole()
-		{
-			using (_mocks.Record())
-			{
-				DoNotExpect.Call(() => _mockConsole.Write(Arg<char>.Is.Anything));
-			}
-			_mocks.ReplayAll();
-			_diffFlushableCanvas.DrawChar(new Point(4, 23), 'b');
-			_diffFlushableCanvas.ClearChangesToCanvas();
-			_diffFlushableCanvas.FlushChangesToConsole();
-			_mocks.VerifyAll();
-		}*/
-
-		[Test]
-		public void WriteCurrentToConsole_ChangedChars_RewrittenToConsole()
-		{
-			_diffFlushableCanvas.DrawChar(new Point(0, 0), 'a');
-			_diffFlushableCanvas.DrawChar(new Point(4, 23), 'b');
-			_diffFlushableCanvas.FlushChangesToConsole();
-
-			_mocks.BackToRecordAll();
-			using (_mocks.Ordered())
-			{
-				_mockConsole.SetCursorPosition(0,0);
-				_mockConsole.Write('a');
-				_mockConsole.SetCursorPosition(4, 23);
-				_mockConsole.Write('c');
-			}
-			_mocks.ReplayAll();
-			_diffFlushableCanvas.DrawChar(new Point(0, 0), 'a');
-			_diffFlushableCanvas.DrawChar(new Point(4, 23), 'c');
-			_diffFlushableCanvas.WriteCurrentToConsole();
-			_mocks.VerifyAll();
+			_diffFlushableCanvas.WriteCurrent(); //Expect: WriteToConsole() NOT called on previous dirty canvas
+			_stubCanvasFactory.dirtyCanvas.AssertWasNotCalled(x => x.WriteToConsole());
 		}
 	}
 }

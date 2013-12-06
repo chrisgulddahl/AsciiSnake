@@ -11,11 +11,11 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		/// <summary>
 		/// Write changes (since last call of FlushChangesToConsole) to console.
 		/// </summary>
-		void FlushChangesToConsole();
+		void FlushChanges();
 
 		/// <summary>
 		/// Write entire canvas to console including any pending changes.
 		/// </summary>
-		void WriteCurrentToConsole();
+		void WriteCurrent();
 	}
 }

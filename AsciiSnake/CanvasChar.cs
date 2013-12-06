@@ -6,7 +6,7 @@ using System.Text;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	struct CanvasChar : ICanvasChar
+	public struct CanvasChar : ICanvasChar
 	{
 		private Point _position;
 		private char _character;

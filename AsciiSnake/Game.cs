@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,7 +15,6 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private IApples _apples;
 		private ISoundManager _soundManager;
 		private IDrawable _drawables;
-		private IConfig _config;
 		private bool _quit;
 		private bool _crashed;
 		private Thread _gameThread;
@@ -36,13 +36,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		private IConsoleWrapper Console { get; set; }
 
+		private IConfig Config { get; set; }
+
 		private void Reset()
 		{
 			//Remember state
 			var isMuted = (_soundManager != null && _soundManager.Muted);
 
 			//Reset
-			_config = _factory.Config;
+			Config = _factory.Config;
 			Console = _factory.Console;
 			Canvas = _factory.DiffFlushableCanvas;
 			_border = _factory.CreateBorder(this);
@@ -53,8 +55,8 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			_drawables = new CompositeDrawable(new List<IDrawable> { _border, _apples, _snake });
 			Console.OutputEncoding = Encoding.ASCII;
 			Console.CursorVisible = false;
-			Console.BackgroundColor = _config.ConsoleBackground;
-			Console.ForegroundColor = _config.ConsoleForeground;
+			Console.BackgroundColor = Config.ConsoleBackground;
+			Console.ForegroundColor = Config.ConsoleForeground;
 			Console.Title = "ASCII Snake by chrisgulddahl.dk";
 			Console.Clear();
 			CurrentTick = 0;
@@ -73,29 +75,31 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			// Draw game for the first time
 			_apples.RefreshApples(CurrentTick);
 			_drawables.Draw();
-			Canvas.WriteCurrentToConsole();
+			Canvas.WriteCurrent();
 
 			// Wait for player to press a key
 			while (!Console.KeyAvailable)
 			{
 				Thread.Sleep(10);
 				_drawables.Draw();
-				Canvas.FlushChangesToConsole();
+				Canvas.FlushChanges();
 				Console.RefreshWindowDimensions();
-
 			}
+
 			while (!_quit && !_crashed)
 			{
 				var start = DateTime.Now.Ticks;
 				Tick();
 				int elapsedTimeMs = (int)(DateTime.Now.Ticks - start) / 10000;
-				Thread.Sleep((_config.TickTime - elapsedTimeMs >= 0 ? _config.TickTime - elapsedTimeMs : 0));
+				Thread.Sleep((Config.TickTime - elapsedTimeMs >= 0 ? Config.TickTime - elapsedTimeMs : 0));
 			}
 
 			if (_crashed)
 			{
 				_soundManager.PlayCrashedSound();
-				DisplayCrashedMessage();
+				DisplayCrashedMessage(new string[]{"You crashed!",
+				                      "Final score: " + Score,
+				                      "Press Q to quit. Press any other key to restart"});
 				while (!Console.KeyAvailable)
 					Thread.Sleep(10);
 				if (Console.ReadKey(true).KeyChar == 'q')
@@ -118,7 +122,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			}
 			_apples.RefreshApples(CurrentTick);
 			_drawables.Draw();
-			Canvas.FlushChangesToConsole();
+			Canvas.FlushChanges();
 			CurrentTick++;
 		}
 
@@ -154,23 +158,17 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			}
 		}
 
-		private void DisplayCrashedMessage() //TODO: draw using canvas
+		private void DisplayCrashedMessage(params string[] lines)
 		{
-			var lines = new List<string>
-				{
-					"You crashed!",
-					"Final score: " + Score,
-					"Press Q to quit. Press any other key to restart"
-				};
 			int messageBoxWidth = lines.Aggregate(0, (maxLength, line) => (Math.Max(line.Length, maxLength)));
-			int messageBoxHeight = lines.Count;
+			int messageBoxHeight = lines.Count();
 			int messageBoxLeft = (Console.WindowWidth - messageBoxWidth) / 2;
 			int messageBoxTop = (Console.WindowHeight - messageBoxHeight) / 2;
-			for (int i = 0; i < lines.Count; i++)
+			for (int i = 0; i < lines.Count(); i++)
 			{
-				Console.SetCursorPosition(messageBoxLeft + (messageBoxWidth - lines.ElementAt(i).Length) / 2, messageBoxTop + i);
-				Console.Write(lines.ElementAt(i));
+				Canvas.DrawString(lines[i], new Point(messageBoxLeft + (messageBoxWidth - lines.ElementAt(i).Length) / 2, messageBoxTop + i), Direction.East,  Config.ConsoleForeground);
 			}
+			Canvas.WriteCurrent();
 		}
 	}
 }

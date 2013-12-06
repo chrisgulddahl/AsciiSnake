@@ -51,12 +51,14 @@
     <Compile Include="CompositeDrawable.cs" />
     <Compile Include="DefaultConfig.cs" />
     <Compile Include="ConsoleWrapper.cs" />
+    <Compile Include="DiffableCanvasFactory.cs" />
     <Compile Include="DiffFlushableCanvas.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="IApples.cs" />
     <Compile Include="IBorder.cs" />
     <Compile Include="ICanvas.cs" />
+    <Compile Include="IDiffableCanvasFactory.cs" />
     <Compile Include="IDiffableCanvas.cs" />
     <Compile Include="ICanvasChar.cs" />
     <Compile Include="IConfig.cs" />
