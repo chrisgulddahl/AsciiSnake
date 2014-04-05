@@ -1,5 +1,8 @@
 ﻿namespace dk.ChrisGulddahl.AsciiSnake
 {
+	/// <summary>
+	/// Factory for IGame. Creates IGames and their dependencies.
+	/// </summary>
 	interface IGameFactory
 	{
 		IConfig Config { get; }

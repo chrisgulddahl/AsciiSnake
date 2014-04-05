@@ -6,6 +6,9 @@ using System.Text;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
+	/// <summary>
+	/// Strategy for where to place new apples.
+	/// </summary>
 	public interface INewAppleLocationStrategy
 	{
 		/// <summary>
