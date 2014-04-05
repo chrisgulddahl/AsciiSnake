@@ -5,34 +5,36 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	class BorderWithScore : IBorder
 	{
 		private IBorder _border;
-		private IGame _game;
-
-		public BorderWithScore(IBorder border, IGame game, ICanvas canvas, IConfig config)
-		{
-			_border = border;
-			_game = game;
-			Canvas = canvas;
-			Config = config;
-		}
-
-		private ICanvas Canvas { get; set; }
+		private IGameScore _score;
 
 		private IConfig Config { get; set; }
 
-		private void DrawScore()
+		public BorderWithScore(IBorder border, IGameScore score, IConfig config)
 		{
-			Canvas.DrawString("Score: " + _game.Score, new Point(3, Canvas.Height - 2), Direction.East, Config.ConsoleForeground);
+			_border = border;
+			_score = score;
+			Config = config;
 		}
 
-		public void Draw()
+		private void DrawScore(ICanvas canvas)
 		{
-			_border.Draw();
-			DrawScore();
+			canvas.DrawString("Score: " + _score.Value, new Point(3, canvas.Height - 2), Direction.East, Config.ConsoleForeground);
+		}
+
+		public void Draw(ICanvas canvas)
+		{
+			_border.Draw(canvas);
+			DrawScore(canvas);
 		}
 
 		public bool ContainsPosition(Point position)
 		{
 			return _border.ContainsPosition(position);
+		}
+
+		public void Reset()
+		{
+			_border.Reset();
 		}
 	}
 }

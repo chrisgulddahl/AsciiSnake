@@ -3,7 +3,7 @@ using System.Net;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	public interface ISnake : IDrawable
+	public interface ISnake : IDrawable, IResettable
 	{
 
 		/// <summary>

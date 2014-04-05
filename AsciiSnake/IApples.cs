@@ -2,7 +2,7 @@
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	public interface IApples : IDrawable
+	public interface IApples : IDrawable, IResettable
 	{
 		INewAppleLocationStrategy NewAppleLocationStrategy { get; set; }
 

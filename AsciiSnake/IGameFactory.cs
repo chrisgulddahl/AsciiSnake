@@ -1,24 +1,14 @@
 ﻿namespace dk.ChrisGulddahl.AsciiSnake
 {
 	/// <summary>
-	/// Factory for IGame. Creates IGames and their dependencies.
+	/// Factory for IGame. Create and configures an IGame.
 	/// </summary>
 	interface IGameFactory
 	{
-		IConfig Config { get; }
-
-		IConsoleWrapper Console { get; }
-
-		IDiffFlushableCanvas DiffFlushableCanvas { get; }
-
-		IGame GetGame();
-
-		IBorder GetBorder(IGame game);
-
-		ISnake GetSnake(IConsoleWrapper console);
-
-		IApples GetApples(ISnake snake);
-
-		ISoundManager GetSoundManager();
+		/// <summary>
+		/// Create and configure a Snake game.
+		/// </summary>
+		/// <returns></returns>
+		IGame CreateGame();
 	}
 }

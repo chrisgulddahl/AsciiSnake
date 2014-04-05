@@ -48,13 +48,14 @@
     <Compile Include="BorderWithScore.cs" />
     <Compile Include="DiffableCanvas.cs" />
     <Compile Include="CanvasChar.cs" />
-    <Compile Include="CompositeDrawable.cs" />
+    <Compile Include="DrawableCollection.cs" />
     <Compile Include="DefaultConfig.cs" />
     <Compile Include="ConsoleWrapper.cs" />
     <Compile Include="DiffableCanvasFactory.cs" />
     <Compile Include="DiffFlushableCanvas.cs" />
     <Compile Include="Direction.cs" />
     <Compile Include="Game.cs" />
+    <Compile Include="SnakeLengthGameScore.cs" />
     <Compile Include="IApples.cs" />
     <Compile Include="IBorder.cs" />
     <Compile Include="ICanvas.cs" />
@@ -67,7 +68,9 @@
     <Compile Include="IGame.cs" />
     <Compile Include="IGameFactory.cs" />
     <Compile Include="IConsoleWrapper.cs" />
+    <Compile Include="IGameScore.cs" />
     <Compile Include="INewAppleLocationStrategy.cs" />
+    <Compile Include="IResettable.cs" />
     <Compile Include="ISnake.cs" />
     <Compile Include="ISoundManager.cs" />
     <Compile Include="Program.cs" />

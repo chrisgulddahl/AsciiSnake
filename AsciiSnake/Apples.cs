@@ -10,26 +10,23 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private readonly Dictionary<Point, int> _apples = new Dictionary<Point, int>();
 		private readonly ISnake _snake;
 
-		public Apples(ICanvas canvas, IConfig config, ISnake snake, INewAppleLocationStrategy newAppleLocationStrategy)
+		public Apples(IConfig config, ISnake snake, INewAppleLocationStrategy newAppleLocationStrategy)
 		{
 			Config = config;
 			_snake = snake;
-			Canvas = canvas;
 			NewAppleLocationStrategy = newAppleLocationStrategy;
 		}
-
-		private ICanvas Canvas { get; set; }
 
 		private IConfig Config { get; set; }
 
 		public INewAppleLocationStrategy NewAppleLocationStrategy { get; set; }
 
-		public void Draw()
+		public void Draw(ICanvas canvas)
 		{
 			var c = Config.AppleDrawingChar;
 			var color = Config.AppleColor;
 			foreach (var apple in _apples)
-				Canvas.DrawChar(apple.Key, c, color);
+				canvas.DrawChar(apple.Key, c, color);
 		}
 
 		public void RefreshApples(int currentGameTick)
@@ -68,6 +65,11 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public void RemoveAppleAt(Point position)
 		{
 			_apples.Remove(position);
+		}
+
+		public void Reset()
+		{
+			_apples.Clear();
 		}
 	}
 }

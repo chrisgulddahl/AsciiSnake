@@ -9,7 +9,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 {
 	class Game : IGame
 	{
-		private readonly IGameFactory _factory;
+		private IGameScore _score;
 		private IBorder _border;
 		private ISnake _snake;
 		private IApples _apples;
@@ -19,9 +19,17 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private bool _crashed;
 		private Thread _gameThread;
 
-		public Game(IGameFactory factory)
+		public Game(IConfig config, IConsoleWrapper console, IDiffFlushableCanvas canvas, IGameScore score, ISoundManager soundManager, IBorder border, ISnake snake, IApples apples)
 		{
-			_factory = factory;
+			Config = config;
+			Console = console;
+			Canvas = canvas;
+			_score = score;
+			_soundManager = soundManager;
+			_border = border;
+			_snake = snake;
+			_apples = apples;
+			_drawables = new DrawableCollection(new List<IDrawable> { _border, _apples, _snake });
 			Reset();
 		}
 
@@ -29,30 +37,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 
 		private IDiffFlushableCanvas Canvas { get; set; }
 
-		public int Score
-		{
-			get { return _snake.Length - 1; }
-		}
-
 		private IConsoleWrapper Console { get; set; }
 
 		private IConfig Config { get; set; }
 
 		private void Reset()
 		{
-			//Remember state
-			var isMuted = (_soundManager != null && _soundManager.Muted);
-
-			//Reset
-			Config = _factory.Config;
-			Console = _factory.Console;
-			Canvas = _factory.DiffFlushableCanvas;
-			_border = _factory.GetBorder(this);
-			_snake = _factory.GetSnake(Console);
-			_apples = _factory.GetApples(_snake);
-			_soundManager = _factory.GetSoundManager();
-			_soundManager.Muted = isMuted;
-			_drawables = new CompositeDrawable(new List<IDrawable> { _border, _apples, _snake });
+			_border.Reset();
+			_snake.Reset();
+			_apples.Reset();
 			Console.OutputEncoding = Encoding.ASCII;
 			Console.CursorVisible = false;
 			Console.BackgroundColor = Config.ConsoleBackground;
@@ -74,14 +67,14 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		{
 			// Draw game for the first time
 			_apples.RefreshApples(CurrentTick);
-			_drawables.Draw();
+			_drawables.Draw(Canvas);
 			Canvas.WriteCurrent();
 
 			// Wait for player to press a key
 			while (!Console.KeyAvailable)
 			{
 				Thread.Sleep(10);
-				_drawables.Draw();
+				_drawables.Draw(Canvas);
 				Canvas.FlushChanges();
 				Console.RefreshWindowDimensions();
 			}
@@ -100,7 +93,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			{
 				_soundManager.PlayCrashedSound();
 				DisplayCrashedMessage(new string[]{"You crashed!",
-				                      "Final score: " + Score,
+				                      "Final score: " + _score.Value,
 				                      "Press Q to quit. Press any other key to restart"});
 				while (!Console.KeyAvailable)
 					Thread.Sleep(10);
@@ -112,7 +105,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			}
 		}
 
-		public void Tick()
+		private void Tick()
 		{
 			HandleKeyPress();
 			_snake.Move();
@@ -123,7 +116,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				return;
 			}
 			_apples.RefreshApples(CurrentTick);
-			_drawables.Draw();
+			_drawables.Draw(Canvas);
 			Canvas.FlushChanges();
 			CurrentTick++;
 		}

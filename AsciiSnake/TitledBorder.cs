@@ -8,29 +8,31 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		private string _title;
 		private string _subtitle;
 
-		public TitledBorder(IBorder border, IDiffFlushableCanvas canvas, IConfig config, string title, string subtitle)
+		private IConfig Config { get; set; }
+
+		public TitledBorder(IBorder border, IConfig config, string title, string subtitle)
 		{
 			_border = border;
 			_title = title;
 			_subtitle = subtitle;
 			Config = config;
-			Canvas = canvas;
 		}
 
-		private IDiffFlushableCanvas Canvas { get; set; }
-
-		private IConfig Config { get; set; }
-
-		public void Draw()
+		public void Draw(ICanvas canvas)
 		{
-			_border.Draw();
-			Canvas.DrawString(_title, new Point(3, 0), Direction.East, Config.ConsoleForeground);
-			Canvas.DrawString(_subtitle, new Point(Canvas.Width - _subtitle.Length - 3, Canvas.Height - 2), Direction.East, Config.ConsoleForeground);
+			_border.Draw(canvas);
+			canvas.DrawString(_title, new Point(3, 0), Direction.East, Config.ConsoleForeground);
+			canvas.DrawString(_subtitle, new Point(canvas.Width - _subtitle.Length - 3, canvas.Height - 2), Direction.East, Config.ConsoleForeground);
 		}
 
 		public bool ContainsPosition(Point position)
 		{
 			return _border.ContainsPosition(position);
+		}
+
+		public void Reset()
+		{
+			_border.Reset();
 		}
 	}
 }

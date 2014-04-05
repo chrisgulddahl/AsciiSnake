@@ -9,17 +9,17 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	{
 		private Direction _direction;
 		private LinkedList<Point> _positions = new LinkedList<Point>();
-		private bool _hasGrown = false;
+		private int _startX;
+		private int _startY;
+		private bool _hasGrown;
 
-		public Snake(ICanvas canvas, IConfig config, int startX, int startY)
+		public Snake(IConfig config, int startX, int startY)
 		{
-			Canvas = canvas;
 			Config = config;
-			Direction = Direction.None;
-			_positions.AddLast(new Point(startX, startY));
+			_startX = startX;
+			_startY = startY;
+			Reset();
 		}
-
-		private ICanvas Canvas { get; set; }
 
 		private IConfig Config { get; set; }
 
@@ -45,15 +45,15 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			get { return _positions.First.Value; }
 		}
 
-		public void Draw()
+		public void Draw(ICanvas canvas)
 		{
 			var snakeColor = Config.SnakeColor;
 			var snakeBodyChar = Config.SnakeBodyDrawingChar;
-			Canvas.DrawChar(Head, Config.SnakeHeadDrawingChar, snakeColor);
+			canvas.DrawChar(Head, Config.SnakeHeadDrawingChar, snakeColor);
 			var elem = _positions.First.Next;
 			while (elem != null)
 			{
-				Canvas.DrawChar(elem.Value, snakeBodyChar, snakeColor);
+				canvas.DrawChar(elem.Value, snakeBodyChar, snakeColor);
 				elem = elem.Next;
 			}
 		}
@@ -90,6 +90,14 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public bool ContainsPosition(Point position)
 		{
 			return _positions.Contains(position);
+		}
+
+		public void Reset()
+		{
+			_positions.Clear();
+			_positions.AddLast(new Point(_startX, _startY));
+			_hasGrown = false;
+			Direction = Direction.None;
 		}
 	}
 }

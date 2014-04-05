@@ -4,52 +4,20 @@ namespace dk.ChrisGulddahl.AsciiSnake
 {
 	class DefaultGameFactory : IGameFactory
 	{
-		public DefaultGameFactory()
+		public IGame CreateGame()
 		{
-			/*Initialize singleton instances*/
-			Config = new DefaultConfig();
-			Console = new ConsoleWrapper();
-			DiffFlushableCanvas = new DiffFlushableCanvas(Config, new DiffableDiffableCanvasFactory(Console, Config));
-		}
-
-		public IConfig Config { get; private set; }
-
-		public IConsoleWrapper Console { get; private set; }
-
-		public IDiffFlushableCanvas DiffFlushableCanvas { get; private set; }
-
-
-		public IGame GetGame()
-		{
-			return new Game(this);
-		}
-
-		public IConsoleWrapper CreateConsole()
-		{
-			return new ConsoleWrapper();
-		}
-
-		public IBorder GetBorder(IGame game)
-		{
-			return new BorderWithScore(
+			var config = new DefaultConfig();
+			var console = new ConsoleWrapper();
+			var canvas = new DiffFlushableCanvas(config, new DiffableDiffableCanvasFactory(console, config));
+			var soundManager = new SoundManager();
+			var snake = new Snake(config, console.WindowWidth / 2, console.WindowHeight / 2);
+			var apples = new Apples(config, snake, new RandomNewAppleLocationStrategy(console));
+			var gameScore = new SnakeLengthGameScore(snake);
+			var border = new BorderWithScore(
 				new TitledBorder(
-					new Border(DiffFlushableCanvas, Config), DiffFlushableCanvas, Config, "ASCII Snake. Source code at chrisgulddahl.dk", "[W] [A] [S] [D] Control. [Q] Quit. [M] Mute")
-					, game, DiffFlushableCanvas, Config);
-		}
-
-		public ISnake GetSnake(IConsoleWrapper console)
-		{
-			return new Snake(DiffFlushableCanvas, Config, console.WindowWidth / 2, console.WindowHeight / 2);
-		}
-
-		public IApples GetApples(ISnake snake)
-		{
-			return new Apples(DiffFlushableCanvas, Config, snake, new RandomNewAppleLocationStrategy(Console));
-		}
-
-		public ISoundManager GetSoundManager()
-		{
-			return new SoundManager();
+					new Border(config, canvas.Width, canvas.Height), config, "ASCII Snake. Source code at chrisgulddahl.dk", "[W] [A] [S] [D] Control. [Q] Quit. [M] Mute")
+					, gameScore, config);
+			return new Game(config, console, canvas, gameScore, soundManager, border, snake, apples);
 		}
 	}
 }

@@ -3,19 +3,19 @@ using System.Linq;
 
 namespace dk.ChrisGulddahl.AsciiSnake
 {
-	public class CompositeDrawable : IDrawable
+	public class DrawableCollection : IDrawable
 	{
-		public CompositeDrawable(IList<IDrawable> drawables)
+		public DrawableCollection(IList<IDrawable> drawables)
 		{
 			Drawables = drawables;
 		}
 
 		public IList<IDrawable> Drawables { get; private set; }
 
-		public void Draw()
+		public void Draw(ICanvas canvas)
 		{
 			foreach (var drawable in Drawables)
-				drawable.Draw();
+				drawable.Draw(canvas);
 		}
 	}
 }

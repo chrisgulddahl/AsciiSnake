@@ -4,31 +4,37 @@ namespace dk.ChrisGulddahl.AsciiSnake
 {
 	public class Border : IBorder
 	{
-		public Border(ICanvas canvas, IConfig config)
-		{
-			Config = config;
-			Canvas = canvas;
-		}
-
-		private ICanvas Canvas { get; set; }
-
+		private int _height;
+		private int _width;
 		private IConfig Config { get; set; }
 
-		public void Draw()
+		public Border(IConfig config, int width, int height)
 		{
-			var height = Canvas.Height;
-			var width = Canvas.Width;
+			Config = config;
+			_width = width;
+			_height = height;
+		}
 
-			Canvas.DrawString(new string(Config.BorderTopChar, width), new Point(0, 0), Direction.East, Config.ConsoleForeground);
-			Canvas.DrawString(new string(Config.BorderBottomChar, width), new Point(0, height - 2), Direction.East, Config.ConsoleForeground);
-			Canvas.DrawString(new string(Config.BorderLeftChar, height - 2), new Point(0, 1), Direction.South, Config.ConsoleForeground);
-			Canvas.DrawString(new string(Config.BorderRightChar, height - 2), new Point(width - 1, 1), Direction.South, Config.ConsoleForeground);
+		public void Draw(ICanvas canvas)
+		{
+			_width = canvas.Width;
+			_height = canvas.Height;
+
+			canvas.DrawString(new string(Config.BorderTopChar, _width), new Point(0, 0), Direction.East, Config.ConsoleForeground);
+			canvas.DrawString(new string(Config.BorderBottomChar, _width), new Point(0, _height - 2), Direction.East, Config.ConsoleForeground);
+			canvas.DrawString(new string(Config.BorderLeftChar, _height - 2), new Point(0, 1), Direction.South, Config.ConsoleForeground);
+			canvas.DrawString(new string(Config.BorderRightChar, _height - 2), new Point(_width - 1, 1), Direction.South, Config.ConsoleForeground);
 		}
 
 		public bool ContainsPosition(Point position)
 		{
-			return position.X <= 0 || position.X >= Canvas.Width - 1
-				   || position.Y <= 0 || position.Y >= Canvas.Height - 2;
+			return position.X <= 0 || position.X >= _width - 1
+				   || position.Y <= 0 || position.Y >= _height - 2;
+		}
+
+		public void Reset()
+		{
+			return; // Do nothing
 		}
 	}
 }
