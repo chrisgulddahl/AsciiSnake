@@ -47,10 +47,10 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			Config = _factory.Config;
 			Console = _factory.Console;
 			Canvas = _factory.DiffFlushableCanvas;
-			_border = _factory.CreateBorder(this);
-			_snake = _factory.CreateSnake(Console);
-			_apples = _factory.CreateApples(_snake);
-			_soundManager = _factory.CreateSoundManager();
+			_border = _factory.GetBorder(this);
+			_snake = _factory.GetSnake(Console);
+			_apples = _factory.GetApples(_snake);
+			_soundManager = _factory.GetSoundManager();
 			_soundManager.Muted = isMuted;
 			_drawables = new CompositeDrawable(new List<IDrawable> { _border, _apples, _snake });
 			Console.OutputEncoding = Encoding.ASCII;
@@ -86,6 +86,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				Console.RefreshWindowDimensions();
 			}
 
+			// Main game loop
 			while (!_quit && !_crashed)
 			{
 				var start = DateTime.Now.Ticks;
@@ -94,6 +95,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 				Thread.Sleep((Config.TickTime - elapsedTimeMs >= 0 ? Config.TickTime - elapsedTimeMs : 0));
 			}
 
+			// Decide whether to restart or quit
 			if (_crashed)
 			{
 				_soundManager.PlayCrashedSound();

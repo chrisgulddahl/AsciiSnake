@@ -6,7 +6,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	{
 		public DefaultGameFactory()
 		{
-			/*Initialize single instances*/
+			/*Initialize singleton instances*/
 			Config = new DefaultConfig();
 			Console = new ConsoleWrapper();
 			DiffFlushableCanvas = new DiffFlushableCanvas(Config, new DiffableDiffableCanvasFactory(Console, Config));
@@ -19,7 +19,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 		public IDiffFlushableCanvas DiffFlushableCanvas { get; private set; }
 
 
-		public IGame CreateGame()
+		public IGame GetGame()
 		{
 			return new Game(this);
 		}
@@ -29,7 +29,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			return new ConsoleWrapper();
 		}
 
-		public IBorder CreateBorder(IGame game)
+		public IBorder GetBorder(IGame game)
 		{
 			return new BorderWithScore(
 				new TitledBorder(
@@ -37,17 +37,17 @@ namespace dk.ChrisGulddahl.AsciiSnake
 					, game, DiffFlushableCanvas, Config);
 		}
 
-		public ISnake CreateSnake(IConsoleWrapper console)
+		public ISnake GetSnake(IConsoleWrapper console)
 		{
 			return new Snake(DiffFlushableCanvas, Config, console.WindowWidth / 2, console.WindowHeight / 2);
 		}
 
-		public IApples CreateApples(ISnake snake)
+		public IApples GetApples(ISnake snake)
 		{
 			return new Apples(DiffFlushableCanvas, Config, snake, new RandomNewAppleLocationStrategy(Console));
 		}
 
-		public ISoundManager CreateSoundManager()
+		public ISoundManager GetSoundManager()
 		{
 			return new SoundManager();
 		}

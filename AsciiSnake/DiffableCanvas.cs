@@ -44,16 +44,16 @@ namespace dk.ChrisGulddahl.AsciiSnake
 			}
 		}
 
-		public IDiffableCanvas Diff(IDiffableCanvas diffableCanvasInput)
+		public IDiffableCanvas Diff(IDiffableCanvas newCanvas)
 		{
 			IDiffableCanvas diff = new DiffableCanvas(Console, Config);
 			var currentTopChars = this.ToArray();
-			var inputTopChars = diffableCanvasInput.ToArray();
-			var addedChars = inputTopChars.Except(currentTopChars);
-			var removedChars = currentTopChars.Except(inputTopChars);
+			var newCanvasTopChars = newCanvas.ToArray();
+			var addedChars = newCanvasTopChars.Except(currentTopChars);
+			var removedChars = currentTopChars.Except(newCanvasTopChars);
 			foreach (var canvasChar in removedChars)
 			{
-				diff.DrawChar(canvasChar.Position, Config.NullChar, Config.ConsoleForeground);
+				diff.DrawChar(canvasChar.Position, Config.NullChar);
 			}
 			foreach (var canvasChar in addedChars)
 			{

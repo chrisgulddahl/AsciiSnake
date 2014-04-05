@@ -10,7 +10,7 @@ namespace dk.ChrisGulddahl.AsciiSnake
 	{
 		private readonly IDiffableCanvasFactory _canvasFactory;
 		private IDiffableCanvas _flushedCanvas; //saves state of latest flushed canvas
-		private IDiffableCanvas _dirtyCanvas; //new chars are written here - dirty until FlushChangesToConsole or WriteCurrentToConsole is called
+		private IDiffableCanvas _dirtyCanvas; //new chars are written here - dirty until FlushChanges or WriteCurrent is called
 
 		public DiffFlushableCanvas(IConfig config, IDiffableCanvasFactory canvasFactory)
 		{

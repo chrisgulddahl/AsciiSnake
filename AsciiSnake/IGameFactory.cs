@@ -8,14 +8,14 @@
 
 		IDiffFlushableCanvas DiffFlushableCanvas { get; }
 
-		IGame CreateGame();
+		IGame GetGame();
 
-		IBorder CreateBorder(IGame game);
+		IBorder GetBorder(IGame game);
 
-		ISnake CreateSnake(IConsoleWrapper console);
+		ISnake GetSnake(IConsoleWrapper console);
 
-		IApples CreateApples(ISnake snake);
+		IApples GetApples(ISnake snake);
 
-		ISoundManager CreateSoundManager();
+		ISoundManager GetSoundManager();
 	}
 }
